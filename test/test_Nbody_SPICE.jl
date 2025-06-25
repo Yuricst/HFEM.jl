@@ -9,19 +9,15 @@ using SPICE
 using Printf
 using Test
 
-include(joinpath(@__DIR__, "../src/HFEM.jl"))
 
-
-# furnish spice kernels
-spice_dir = ENV["SPICE"]
-furnsh(joinpath(spice_dir, "lsk", "naif0012.tls"))
-furnsh(joinpath(spice_dir, "spk", "de440.bsp"))
-furnsh(joinpath(spice_dir, "pck", "gm_de440.tpc"))
+if !@isdefined(HFEM)
+    include(joinpath(@__DIR__, "../src/HFEM.jl"))
+end
 
 
 function print_matrix(A)
-    for i = 1:size(A,1)
-        for j = 1:size(A,2)
+    for i in 1:size(A,1)
+        for j in 1:size(A,2)
             @printf("% 1.6e  ", A[i,j])
         end
         println()
@@ -43,8 +39,8 @@ test_eom_Nbody_SPICE = function()
 
     et0 = str2et("2020-01-01T00:00:00")
     parameters = HFEM.HFEMParameters(et0, DU, GMs, naif_ids, naif_frame, abcorr)
-    @show parameters.DU, parameters.TU, parameters.VU
-    @show parameters.mus
+    # @show parameters.DU, parameters.TU, parameters.VU
+    # @show parameters.mus
 
     # initial state (in canonical scale)
     u0 = [1.0, 0.0, 0.3, 0.5, 1.0, 0.0]

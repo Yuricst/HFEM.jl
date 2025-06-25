@@ -1,6 +1,8 @@
 module HFEM
 
+using Dierckx
 using LinearAlgebra
+using Printf
 using SPICE
 import Symbolics
 
@@ -10,6 +12,7 @@ include("parameters.jl")
 include("eoms/eom_Nbody_SPICE.jl")
 include("eoms/eom_Nbody_Interp.jl")
 
+export InterpolatedEphemeris
 export HFEMParameters
 export eom_Nbody_SPICE!, eom_stm_Nbody_SPICE!, dfdx_Nbody_SPICE 
 
