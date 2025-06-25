@@ -6,6 +6,7 @@ using Printf
 using SPICE
 import Symbolics
 
+include("perturbations/third_body.jl")
 include("jacobians_symbolic.jl")
 include("ephemeris_interpolation.jl")
 include("parameters.jl")

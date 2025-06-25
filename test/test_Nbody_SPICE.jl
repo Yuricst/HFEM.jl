@@ -6,22 +6,11 @@ Uses low-level API
 using LinearAlgebra
 using OrdinaryDiffEq
 using SPICE
-using Printf
 using Test
 
 
 if !@isdefined(HFEM)
     include(joinpath(@__DIR__, "../src/HFEM.jl"))
-end
-
-
-function print_matrix(A)
-    for i in 1:size(A,1)
-        for j in 1:size(A,2)
-            @printf("% 1.6e  ", A[i,j])
-        end
-        println()
-    end
 end
 
 
@@ -71,8 +60,8 @@ test_eom_stm_Nbody_SPICE = function(;verbose::Bool = false)
 
     et0 = str2et("2020-01-01T00:00:00")
     parameters = HFEM.HFEMParameters(et0, DU, GMs, naif_ids, naif_frame, abcorr)
-    @show parameters.DU, parameters.TU, parameters.VU
-    @show parameters.mus
+    # @show parameters.DU, parameters.TU, parameters.VU
+    # @show parameters.mus
 
     # initial state (in canonical scale)
     x0 = [1.0, 0.0, 0.3, 0.5, 1.0, 0.0]
@@ -80,7 +69,7 @@ test_eom_stm_Nbody_SPICE = function(;verbose::Bool = false)
 
     # evaluate Jacobian
     jac_analytical = HFEM.dfdx_Nbody_SPICE(x0, x0, parameters, 0.0)
-    @show jac_analytical
+    # @show jac_analytical
 
     f_eval = zeros(6)
     HFEM.eom_Nbody_SPICE!(f_eval, x0, parameters, 0.0)
