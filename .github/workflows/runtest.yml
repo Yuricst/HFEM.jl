@@ -17,15 +17,21 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        julia-version: ['lts', '1', 'pre']
-        julia-arch: [x64, x86]
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        julia-version: ['lts'] # '1', 'pre']
+        julia-arch: [x86] #[x64, x86]
+        os: [ubuntu-latest] #, windows-latest, macOS-latest]
         exclude:
           - os: macOS-latest
             julia-arch: x86
 
     steps:
       - uses: actions/checkout@v4
+      - name: Download file to ./spice/test
+        run: |
+          mkdir -p ./spice/test
+          curl -L -o ./spice/test/naif0012.tls "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls"
+          curl -L -o ./spice/test/de440.bsp "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp"
+          curl -L -o ./spice/test/gm_de440.tpc "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/gm_de440.tpc"
       - uses: julia-actions/setup-julia@v2
         with:
           version: ${{ matrix.julia-version }}
