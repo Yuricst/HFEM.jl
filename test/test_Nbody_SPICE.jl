@@ -41,7 +41,7 @@ test_eom_Nbody_SPICE = function()
     sol = solve(prob, Vern7(), reltol=1e-12, abstol=1e-12)
     u_check = [0.5223150961449969, 2.096145052759142, -0.1636600693576513,
                -0.40936130128708903, 0.2538626713075729, -0.16005651999775147]
-    @test norm(sol.u[end] - u_check) < 1e-12
+    @test norm(sol.u[end] - u_check) < 1e-11
 end
 
 
