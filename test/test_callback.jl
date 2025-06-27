@@ -8,9 +8,9 @@ using OrdinaryDiffEq
 using SPICE
 using Test
 
-if !@isdefined(HFEM)
+#if !@isdefined(HFEM)
     include(joinpath(@__DIR__, "../src/HFEM.jl"))
-end
+#end
 
 
 test_callback_trueanomaly = function()
@@ -54,14 +54,15 @@ test_callback_trueanomaly = function()
         # solve with callback
         time_bounds = (3*86400/parameters.TU, tspan[end])
         radius_bounds = (0.0, 1e6/parameters.DU)
-        detect_trueanomaly = HFEM.get_trueanomaly_event(θ_target, time_bounds, radius_bounds, parameters.mus[1])
+        detect_trueanomaly = HFEM.get_trueanomaly_event(θ_target; t_bounds=time_bounds, radius_bounds=radius_bounds)#, parameters.mus[1])
         affect!(integrator) = terminate!(integrator)
         cb = ContinuousCallback(detect_trueanomaly, affect!)
         sol_cb = solve(prob, Tsit5(), callback = cb, reltol=1e-12, abstol=1e-12)
         @test HFEM.angle_difference(HFEM.cart2trueanomaly(sol_cb.u[end][1:6], parameters.mus[1]), θ_target) < 1e-12
+        #@show HFEM.angle_difference(HFEM.cart2trueanomaly(sol_cb.u[end][1:6], parameters.mus[1]), θ_target)
 
-        # append to plot
-        #scatter!(ax3d, [sol_cb.u[end][1]], [sol_cb.u[end][2]], [sol_cb.u[end][3]], color=:red, marker=:cross, markersize=10)
+        # # append to plot
+        # scatter!(ax3d, [sol_cb.u[end][1]], [sol_cb.u[end][2]], [sol_cb.u[end][3]], color=:red, marker=:cross, markersize=10)
     end
     #display(fig)
 end
