@@ -32,6 +32,7 @@ jobs:
           curl -L -o ./spice/test/naif0012.tls "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls"
           curl -L -o ./spice/test/de440.bsp "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440.bsp"
           curl -L -o ./spice/test/gm_de440.tpc "https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/gm_de440.tpc"
+          curl -L -o ./spice/test/receding_horiz_3189_1burnApo_DiffCorr_15yr.bsp "https://naif.jpl.nasa.gov/pub/naif/misc/MORE_PROJECTS/DSG/receding_horiz_3189_1burnApo_DiffCorr_15yr.bsp"
       - uses: julia-actions/setup-julia@v2
         with:
           version: ${{ matrix.julia-version }}
