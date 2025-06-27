@@ -30,3 +30,7 @@ end
     include("test_Nbody_SPICE.jl")
     include("test_Nbody_Interp.jl")
 end
+
+@testset "Callbacks              " begin
+    include("test_callback.jl")
+end

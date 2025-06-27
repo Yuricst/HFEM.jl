@@ -3,8 +3,8 @@
 `HFEM.jl` is a minimal implementation of high-fidelity ephemeris model dynamics compatible with the [`OrdinaryDiffEq.jl`](https://github.com/SciML/OrdinaryDiffEq.jl) ecosystem (i.e. its solvers, parallelism, etc.).
 
 What `HFEM.jl` contains:
--  full-ephemeris (and other - TBD) equations of motion relevant for astrodynamics
-- commonly used event functions (TODO)
+- full-ephemeris equations of motion relevant for astrodynamics
+- callback conditions for common astrodynamics events (e.g. detection of osculating true anomaly)
 
 What `HFEM.jl` is *not*:
 - it is not an integrator, i.e. there are no integration schemes (e.g. Runge-Kutta algorithms, step-correction, event detection features, etc.) impemented (at least for now)

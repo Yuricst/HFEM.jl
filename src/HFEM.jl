@@ -12,6 +12,7 @@ include("ephemeris_interpolation.jl")
 include("parameters.jl")
 include("eoms/eom_Nbody_SPICE.jl")
 include("eoms/eom_Nbody_Interp.jl")
+include("events.jl")
 
 export InterpolatedEphemeris
 export HFEMParameters
