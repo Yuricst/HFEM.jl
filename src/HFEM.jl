@@ -17,5 +17,6 @@ include("events.jl")
 export InterpolatedEphemeris
 export HFEMParameters
 export eom_Nbody_SPICE!, eom_stm_Nbody_SPICE!, dfdx_Nbody_SPICE 
+export get_trueanomaly_event
 
 end # module HFEM
