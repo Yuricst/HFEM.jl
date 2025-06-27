@@ -12,11 +12,13 @@ if !haskey(ENV, "SPICE")
     furnsh(joinpath(spice_dir, "naif0012.tls"))
     furnsh(joinpath(spice_dir, "de440.bsp"))
     furnsh(joinpath(spice_dir, "gm_de440.tpc"))
+    furnsh(joinpath(spice_dir, "receding_horiz_3189_1burnApo_DiffCorr_15yr.bsp"))
 else
     spice_dir = ENV["SPICE"]
     furnsh(joinpath(spice_dir, "lsk", "naif0012.tls"))
     furnsh(joinpath(spice_dir, "spk", "de440.bsp"))
     furnsh(joinpath(spice_dir, "pck", "gm_de440.tpc"))
+    furnsh(joinpath(spice_dir, "misc", "dsg_naif", "receding_horiz_3189_1burnApo_DiffCorr_15yr.bsp"))
 end
 
 
