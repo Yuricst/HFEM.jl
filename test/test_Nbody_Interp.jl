@@ -13,13 +13,6 @@ if !@isdefined(HFEM)
 end
 
 
-# furnish spice kernels
-spice_dir = ENV["SPICE"]
-furnsh(joinpath(spice_dir, "lsk", "naif0012.tls"))
-furnsh(joinpath(spice_dir, "spk", "de440.bsp"))
-furnsh(joinpath(spice_dir, "pck", "gm_de440.tpc"))
-
-
 test_eom_Nbody_Interp = function()
     # define parameters 
     GMs = [
