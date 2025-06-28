@@ -171,14 +171,16 @@ test_eom_stm_Nbody_Interp = function(;verbose::Bool = false)
 
         STM_numerical[:,i] = (sol_ptrb.u[end][1:6] - sol_ptrb_min.u[end][1:6]) / (2*h)
     end
-    # println("Analytical STM:")
-    # print_matrix(STM_analytical)
-    # println()
-    # println("Numerical STM:")
-    # print_matrix(STM_numerical)
-    # println()
-    # println("Diff:")
-    # print_matrix(STM_analytical - STM_numerical)
+    if verbose
+        println("Analytical STM:")
+        print_matrix(STM_analytical)
+        println()
+        println("Numerical STM:")
+        print_matrix(STM_numerical)
+        println()
+        println("Diff:")
+        print_matrix(STM_analytical - STM_numerical)
+    end
     @test maximum(abs.(STM_analytical - STM_numerical)) < 1e-5
 end
 
