@@ -15,12 +15,8 @@ end
 
 test_eom_Nbody_SPICE = function()
     # define parameters
-    GMs = [
-        4.9028000661637961E+03,
-        3.9860043543609598E+05,
-        1.3271244004193938E+11,
-    ]
     naif_ids = ["301", "399", "10"]
+    GMs = [bodvrd(ID, "GM", 1)[1] for ID in naif_ids]
     naif_frame = "J2000"
     abcorr = "NONE"
     DU = 3000.0
@@ -39,20 +35,16 @@ test_eom_Nbody_SPICE = function()
     # solve
     prob = ODEProblem(HFEM.eom_Nbody_SPICE!, u0, tspan, parameters)
     sol = solve(prob, Vern7(), reltol=1e-12, abstol=1e-12)
-    u_check = [0.5223150961449969, 2.096145052759142, -0.1636600693576513,
-               -0.40936130128708903, 0.2538626713075729, -0.16005651999775147]
+    u_check = [0.5223145338552279, 2.0961454012986276, -0.16366028913053066,
+              -0.4093613718782754, 0.2538623882288259, -0.1600564978501581]
     @test norm(sol.u[end] - u_check) < 1e-11
 end
 
 
 test_eom_stm_Nbody_SPICE = function(;verbose::Bool = false)
     # define parameters
-    GMs = [
-        4.9028000661637961E+03,
-        3.9860043543609598E+05,
-        1.3271244004193938E+11,
-    ]
     naif_ids = ["301", "399", "10"]
+    GMs = [bodvrd(ID, "GM", 1)[1] for ID in naif_ids]
     naif_frame = "J2000"
     abcorr = "NONE"
     DU = 3000.0

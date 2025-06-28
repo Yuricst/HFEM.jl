@@ -48,7 +48,7 @@ using HFEM
 using OrdinaryDiffEq
 
 naif_ids = ["301", "399", "10"]        # NAIF IDs of bodies to be included; first ID is of the central body
-GMs = [4.9028000661637961E+03, 3.9860043543609598E+05, 1.3271244004193938E+11]   # in km^3/s^2
+GMs = [bodvrd(ID, "GM", 1)[1] for ID in naif_ids]      # in km^3/s^2
 naif_frame = "J2000"
 abcorr = "NONE"
 DU = 1e5                               # canonical distance unit, in km

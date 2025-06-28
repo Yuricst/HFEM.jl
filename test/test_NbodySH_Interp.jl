@@ -85,12 +85,8 @@ function test_eom_stm_NbodySH_Interp(;verbose=false)
     #spherical_harmonics_data = HFEM.load_spherical_harmonics(filepath, nmax, denormalize)
 
     # define parameters
-    GMs = [
-        4.9028000661637961E+03,
-        3.9860043543609598E+05,
-        1.3271244004193938E+11,
-    ]
     naif_ids = ["301", "399", "10"]
+    GMs = [bodvrd(ID, "GM", 1)[1] for ID in naif_ids]
     naif_frame = "J2000"
     abcorr = "NONE"
     DU = 1e5
