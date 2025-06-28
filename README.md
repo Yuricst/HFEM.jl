@@ -46,6 +46,15 @@ For further details, see the [docs](https://yuricst.github.io/HFEM.jl/).
 ```julia
 using HFEM
 using OrdinaryDiffEq
+using SPICE
+
+# load SPICE kernels
+spice_dir = ENV["SPICE"]
+furnsh(joinpath(spice_dir, "lsk", "naif0012.tls"))
+furnsh(joinpath(spice_dir, "spk", "de440.bsp"))
+furnsh(joinpath(spice_dir, "pck", "gm_de440.tpc"))
+furnsh(joinpath(spice_dir, "pck", "moon_pa_de440_200625.bpc"))
+furnsh(joinpath(spice_dir, "fk", "moon_de440_250416.tf"))
 
 naif_ids = ["301", "399", "10"]        # NAIF IDs of bodies to be included; first ID is of the central body
 GMs = [bodvrd(ID, "GM", 1)[1] for ID in naif_ids]      # in km^3/s^2
