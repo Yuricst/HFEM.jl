@@ -45,50 +45,37 @@ pkg> dev ./path/to/HFEM.jl
 using HFEM
 using OrdinaryDiffEq
 
-# define parameters
-GMs = [
-    4.9028000661637961E+03,
-    3.9860043543609598E+05,
-    1.3271244004193938E+11,                 # GM's in km^3/s^2
-]
-naif_ids = ["301", "399", "10"]
+naif_ids = ["301", "399", "10"]        # NAIF IDs of bodies to be included; first ID is of the central body
+GMs = [4.9028000661637961E+03, 3.9860043543609598E+05, 1.3271244004193938E+11]   # in km^3/s^2
 naif_frame = "J2000"
 abcorr = "NONE"
-DU = 3000.0                                 # distance canonical scale, in km
-et0 = str2et("2020-01-01T00:00:00")         # reference epoch (i.e. epoch when t = 0 within the eom)
-parameters = HFEM.HFEMParameters(et0, DU, GMs, naif_ids, naif_frame, abcorr)
+DU = 1e5                               # canonical distance unit, in km
 
-# construct & solve ODE problem
-x0 = [1.0, 0.0, 0.3, 0.5, 1.0, 0.0]         # initial state in DU & DU/TU
-tspan = (0.0, 7*86400/parameters.TU)
-prob = ODEProblem(HFEM.eom_Nbody_SPICE!, x0, tspan, parameters)
-sol = solve(prob, Vern7(), reltol=1e-12, abstol=1e-12)
+nmax = 4                               # using up to 4-by-4 spherical harmonics
+filepath_spherical_harmonics = "HFEM.jl/data/luna/gggrx_1200l_sha_20x20.tab"
 
-# propagate both state & STM
-x0_stm = [x0; reshape(I(6),36)]
-prob = ODEProblem(HFEM.eom_stm_Nbody_SPICE!, x0_stm, tspan, parameters)
-sol = solve(prob, Vern7(), reltol=1e-12, abstol=1e-12)
-```
-
-To parallelize with multi-thread, use instead interpolated ephemerides:
-
-```julia
-et0 = str2et("2020-01-01T00:00:00")
+et0 = str2et("2026-01-05T00:00:00")    # reference epoch
 etf = et0 + 30 * 86400.0
-interpolate_ephem_span = [et0, etf]
+interpolate_ephem_span = [et0, etf]    # range of epoch to interpolate ephemeris
+interpolation_time_step = 1000.0       # time-step to sample ephemeris for interpolation
+
 parameters = HFEM.HFEMParameters(
     et0, DU, GMs, naif_ids, naif_frame, abcorr;
-    interpolate_ephem_span = interpolate_ephem_span
+    interpolate_ephem_span=interpolate_ephem_span,
+    interpolation_time_step = interpolation_time_step,
+    filepath_spherical_harmonics = filepath_spherical_harmonics,
+    nmax = nmax,
+    frame_PCPF = "MOON_PA",
 )
 
 # construct & solve ODE problem
 x0 = [1.0, 0.0, 0.3, 0.5, 1.0, 0.0]         # initial state in DU & DU/TU
 tspan = (0.0, 7*86400/parameters.TU)
-prob = ODEProblem(HFEM.eom_Nbody_Interp!, x0, tspan, parameters)
-sol = solve(prob, Vern7(), reltol=1e-12, abstol=1e-12)
+prob = ODEProblem(HFEM.eom_NbodySH_SPICE!, x0, tspan, parameters)              # or HFEM.eom_NbodySH_Interp!
+sol = solve(prob, Vern8(), reltol=1e-14, abstol=1e-14)
 
 # propagate both state & STM
 x0_stm = [x0; reshape(I(6),36)]
-prob = ODEProblem(HFEM.eom_stm_Nbody_Interp!, x0_stm, tspan, parameters)
-sol = solve(prob, Vern7(), reltol=1e-12, abstol=1e-12)
+prob = ODEProblem(HFEM.eom_stm_NbodySH_SPICE_fd!, x0_stm, tspan, parameters)   # or HFEM.eom_stm_NbodySH_Interp_fd!
+sol = solve(prob, Vern8(), reltol=1e-14, abstol=1e-14)
 ```
