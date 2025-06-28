@@ -1,5 +1,5 @@
 """
-Test integrating N-body dynamics with SPICE call within eom.
+Test integrating N-body+SH dynamics with SPICE call within eom.
 """
 
 using LinearAlgebra
@@ -12,7 +12,7 @@ if !@isdefined(HFEM)
 end
 
 
-test_Nbody_Interp_ensemble = function()
+test_NbodySH_Interp_ensemble = function()
     # define parameters
     GMs = [
         4.9028000661637961E+03,
@@ -24,11 +24,20 @@ test_Nbody_Interp_ensemble = function()
     abcorr = "NONE"
     DU = 1e5
 
+    filepath_spherical_harmonics = joinpath(@__DIR__, "../data/luna/gggrx_1200l_sha_20x20.tab")
+    nmax = 4
+
     et0 = str2et("2026-01-05T00:00:00")
     etf = et0 + 30 * 86400.0
     interpolate_ephem_span = [et0, etf]
+    interpolation_time_step = 1000.0
     parameters = HFEM.HFEMParameters(et0, DU, GMs, naif_ids, naif_frame, abcorr;
-        interpolate_ephem_span=interpolate_ephem_span)
+        interpolate_ephem_span=interpolate_ephem_span,
+        filepath_spherical_harmonics = filepath_spherical_harmonics,
+        nmax = nmax,
+        frame_PCPF = "MOON_PA",
+        interpolation_time_step = interpolation_time_step,
+    )
 
     # initial state (in canonical scale)
     x0_dim, _ = spkezr("-60000", et0, naif_frame, abcorr, naif_ids[1])
@@ -51,7 +60,7 @@ test_Nbody_Interp_ensemble = function()
     end
 
     # create ensemble problem
-    prob_base = ODEProblem(HFEM.eom_Nbody_Interp!, x0, tspan, parameters)
+    prob_base = ODEProblem(HFEM.eom_NbodySH_Interp!, x0, tspan, parameters)
     ensemble_prob = EnsembleProblem(
         prob_base;
         prob_func = prob_func_Nbody
@@ -64,7 +73,7 @@ test_Nbody_Interp_ensemble = function()
     # solve in serial
     sols_serial = []
     for i = 1:N_traj
-        prob = ODEProblem(HFEM.eom_Nbody_Interp!, x0_conditions[i], tspan, parameters)
+        prob = ODEProblem(HFEM.eom_NbodySH_Interp!, x0_conditions[i], tspan, parameters)
         sol = solve(prob, Vern9(), reltol=1e-14, abstol=1e-14)
         push!(sols_serial, sol)
     end
@@ -83,7 +92,7 @@ test_Nbody_Interp_ensemble = function()
     end
 
     # create ensemble problem
-    prob_base = ODEProblem(HFEM.eom_stm_Nbody_Interp!, x0_stm, tspan, parameters)
+    prob_base = ODEProblem(HFEM.eom_stm_NbodySH_Interp_fd!, x0_stm, tspan, parameters)
     ensemble_prob = EnsembleProblem(
         prob_base;
         prob_func = prob_func_Nbody_stm
@@ -96,7 +105,7 @@ test_Nbody_Interp_ensemble = function()
     # solve in serial
     sols_stm_serial = []
     for i = 1:N_traj
-        prob = ODEProblem(HFEM.eom_stm_Nbody_Interp!, [x0_conditions[i]; reshape(I(6),36)], tspan, parameters)
+        prob = ODEProblem(HFEM.eom_stm_NbodySH_Interp_fd!, [x0_conditions[i]; reshape(I(6),36)], tspan, parameters)
         sol = solve(prob, Vern9(), reltol=1e-14, abstol=1e-14)
         push!(sols_stm_serial, sol)
     end
@@ -114,4 +123,4 @@ test_Nbody_Interp_ensemble = function()
 end
 
 
-test_Nbody_Interp_ensemble()
+test_NbodySH_Interp_ensemble()

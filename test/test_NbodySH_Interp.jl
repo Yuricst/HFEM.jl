@@ -7,9 +7,9 @@ using OrdinaryDiffEq
 using SPICE
 using Test
 
-#if !@isdefined(HFEM)
+if !@isdefined(HFEM)
     include(joinpath(@__DIR__, "../src/HFEM.jl"))
-#end
+end
 
 
 test_eom_NbodySH_SPICE = function()
