@@ -15,6 +15,7 @@ There are a number of equations of motion implemented in `HFEM.jl`.
     STM_tf   = reshape(sol.u[end][7:42],6,6)'   # final 6-by-6 STM
     ```
 
+## Dynamics model
 
 The dynamics model is of the form 
 
@@ -40,15 +41,48 @@ The dynamics model is of the form
 \end{bmatrix}
 ```
 
-where: 
+### Third-body perturbation
 
-- `Nbody`: central gravity term + third-body perturbations ($\boldsymbol{a}_{\mathrm{3bd},i}$)
-- `NbodySH`: central gravity term + third-body perturbations + spherical harmonics perturbations up to `nmax` degree ($\boldsymbol{a}_{\mathrm{SH},n_{\max}}$)
+The third-body perturbation due to body $i$, $\boldsymbol{a}_{\mathrm{3bd},i}$, is given by
+
+```math
+\boldsymbol{a}_{\mathrm{3bd},i} 
+= -\mu_i \left(
+    \dfrac{\boldsymbol{r} - \boldsymbol{r}_i}{\| \boldsymbol{r} - \boldsymbol{r}_i \|_2^3}
+    +
+    \dfrac{\boldsymbol{r}_i}{\| \boldsymbol{r}_i \|_2^3}
+\right)
+```
+
+where $\boldsymbol{r}_i$ is the position vector of the perturbing body.
+In `HEFM.jl`, this term is implemented using Battin's $F(q)$ function:
+
+```math
+\boldsymbol{a}_{\mathrm{3bd},i} =
+\dfrac{\mu_i}{\| \boldsymbol{r} - \boldsymbol{r}_i \|_2^3} (\boldsymbol{r} + F(q_i)\boldsymbol{r}_i)
+```
+
+where $F(q_i)$ is given by
+
+```math
+F(q_i) = q_i \left( \dfrac{3 + 3q_i + q_i^2}{1 + (\sqrt{1 + q_i})^3} \right)
+```
+
+and $q_i$ is 
+
+```math
+q_i = \dfrac{\boldsymbol{r}^T (\boldsymbol{r} - 2(\boldsymbol{r} - \boldsymbol{r}_i))}{\boldsymbol{r}_i^T \boldsymbol{r}_i}
+```
+
 
 
 ## List of equations of motion in `HFEM.jl`
 
-The STM is integrated with the Jacobian, which is computed either analytically (using symbolic derivative) or via `ForwardDiff` (functions containing `_fd`)
+The table below summarizes the equations of motion. Note: 
+
+- `Nbody`: central gravity term + third-body perturbations ($\boldsymbol{a}_{\mathrm{3bd},i}$)
+- `NbodySH`: central gravity term + third-body perturbations + spherical harmonics perturbations up to `nmax` degree ($\boldsymbol{a}_{\mathrm{SH},n_{\max}}$)
+- The STM is integrated with the Jacobian, which is computed either analytically (using symbolic derivative) or via `ForwardDiff` (functions containing `_fd`)
 
 | eom                   | eom + STM (analytical)  | eom + STM (ForwardDiff)      | `EnsembleThreads` compatibility |
 |-----------------------|-------------------------|------------------------------|---------------------------------|
