@@ -39,6 +39,8 @@ pkg> dev ./path/to/HFEM.jl
 
 ## Examples
 
+For further details, see the [docs](https://yuricst.github.io/HFEM.jl/).
+
 ### N-body Dynamics
 
 ```julia
