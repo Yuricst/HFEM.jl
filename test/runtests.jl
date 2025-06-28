@@ -13,7 +13,7 @@ if !haskey(ENV, "SPICE")
     furnsh(joinpath(spice_dir, "de440.bsp"))
     furnsh(joinpath(spice_dir, "gm_de440.tpc"))
     furnsh(joinpath(spice_dir, "moon_pa_de440_200625.bpc"))
-    furnsh(joinpath(spice_dir, "moon_de440_220930.tf"))
+    furnsh(joinpath(spice_dir, "moon_de440_250416.tf"))
     furnsh(joinpath(spice_dir, "receding_horiz_3189_1burnApo_DiffCorr_15yr.bsp"))
 else
     spice_dir = ENV["SPICE"]
@@ -21,7 +21,7 @@ else
     furnsh(joinpath(spice_dir, "spk", "de440.bsp"))
     furnsh(joinpath(spice_dir, "pck", "gm_de440.tpc"))
     furnsh(joinpath(spice_dir, "pck", "moon_pa_de440_200625.bpc"))
-    furnsh(joinpath(spice_dir, "fk", "moon_de440_220930.tf"))
+    furnsh(joinpath(spice_dir, "fk", "moon_de440_250416.tf"))
     furnsh(joinpath(spice_dir, "misc", "dsg_naif", "receding_horiz_3189_1burnApo_DiffCorr_15yr.bsp"))
 end
 
