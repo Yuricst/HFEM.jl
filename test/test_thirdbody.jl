@@ -3,9 +3,9 @@
 using Random
 using Test
 
-#if !@isdefined(HFEM)
+if !@isdefined(HFEM)
     include(joinpath(@__DIR__, "../src/HFEM.jl"))
-#end
+end
 
 
 function test_third_body_accel()
