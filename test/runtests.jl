@@ -38,7 +38,7 @@ end
     include("test_Nbody_ensemble.jl")
 end
 
-@testset "Spherical harmonics     " begin
+@testset "Spherical harmonics    " begin
     include("test_spherical_harmonics.jl")
     include("test_NbodySH_SPICE.jl")
     include("test_NbodySH_Interp.jl")

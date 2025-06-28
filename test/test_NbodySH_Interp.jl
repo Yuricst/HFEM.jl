@@ -62,9 +62,9 @@ test_eom_NbodySH_SPICE = function()
     prob_interp = ODEProblem(HFEM.eom_NbodySH_Interp!, u0, tspan, parameters)
     sol_interp = solve(prob_interp, Vern8(), reltol=1e-14, abstol=1e-14)
 
-    @show sol_spice.u[end]
-    @show sol_interp.u[end]
-    @show maximum(abs.(sol_spice.u[end] - sol_interp.u[end]))
+    # @show sol_spice.u[end]
+    # @show sol_interp.u[end]
+    # @show maximum(abs.(sol_spice.u[end] - sol_interp.u[end]))
     @test sol_spice.u[end] ≈ sol_interp.u[end] atol=1e-12
 
     # # plot
@@ -178,14 +178,16 @@ function test_eom_stm_NbodySH_Interp(;verbose=false)
 
         STM_numerical[:,i] = (sol_ptrb.u[end][1:6] - sol_ptrb_min.u[end][1:6]) / (2*h)
     end
-    println("Analytical STM:")
-    print_matrix(STM_analytical)
-    println()
-    println("Numerical STM:")
-    print_matrix(STM_numerical)
-    println()
-    println("Diff:")
-    print_matrix(STM_analytical - STM_numerical)
+    if verbose
+        println("Analytical STM:")
+        print_matrix(STM_analytical)
+        println()
+        println("Numerical STM:")
+        print_matrix(STM_numerical)
+        println()
+        println("Diff:")
+        print_matrix(STM_analytical - STM_numerical)
+    end
     @test maximum(abs.(STM_analytical - STM_numerical)) < 1e-5
 end
 
