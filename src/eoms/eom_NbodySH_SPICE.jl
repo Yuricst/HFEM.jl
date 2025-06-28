@@ -19,7 +19,7 @@ function eom_NbodySH_SPICE!(dx, x, params, t)
     end
 
     if !isnothing(params.spherical_harmonics_data)
-        T_inr2pcpf = pxform(params.naif_frame, params.frame_PCPF, params.et0 + t*params.TU)
+        T_inr2pcpf = SPICE.pxform(params.naif_frame, params.frame_PCPF, params.et0 + t*params.TU)
         a_SH = spherical_harmonics_accel(
             T_inr2pcpf,
             x[1:3] * params.DU,
