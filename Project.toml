@@ -1,6 +1,6 @@
 name = "HFEM"
 uuid = "2c790280-9c90-4c3f-8fb8-a66dc063821a"
-authors = ["Yuri <yuri.shimane@gmail.com>"]
+authors = ["@yuricst"]
 version = "0.1.0"
 
 [deps]
