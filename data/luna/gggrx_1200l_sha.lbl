@@ -1,0 +1,250 @@
+PDS_VERSION_ID               = "PDS3"
+RECORD_TYPE                  = FIXED_LENGTH
+RECORD_BYTES                 = 122
+FILE_RECORDS                 = 720600
+^SHADR_HEADER_TABLE          = ("GGGRX_1200L_SHA.TAB",1)
+^SHADR_COEFFICIENTS_TABLE    = ("GGGRX_1200L_SHA.TAB",3)
+INSTRUMENT_HOST_NAME         = {"GRAVITY RECOVERY AND INTERIOR LABORATORY A",
+                                "GRAVITY RECOVERY AND INTERIOR LABORATORY B"}
+TARGET_NAME                  = "MOON"
+INSTRUMENT_NAME              = {"LUNAR GRAVITY RANGING SYSTEM A",
+                                "LUNAR GRAVITY RANGING SYSTEM B"}
+DATA_SET_ID                  = "GRAIL-L-LGRS-5-RDR-V1.0"
+OBSERVATION_TYPE             = "GRAVITY FIELD"
+ORIGINAL_PRODUCT_ID          = "GRGM1200L"
+PRODUCT_ID                   = "GGGRX_1200L_SHA.TAB"
+PRODUCT_RELEASE_DATE         = 2021-04-01
+DESCRIPTION                  = "
+ This file contains coefficients and related data for the GSFC Lunar gravity
+ field model GRGM1200L. This project was funded by grant NNX15AJ65G. 
+
+ This is a degree and order 1199 spherical harmonic model. This product was 
+ derived from a local analysis of GRAIL data. The Moon was divided into 14 
+ regions, and for each region, a separate solution was determined, using 
+ GRAIL inter-satellite Ka-band range-rate data only. Gravity was represented 
+ as gridded gravity anomalies, and a global background gravity model in 
+ spherical harmonics was also used. This background model was the GRGM1200A 
+ model. Neighbor smoothing was used as a constraint. The details of the method
+ can be found in an earlier publication, GOOSSENSETAL2014, and this new model 
+ is described in detail in GOOSSENSETAL2021.
+
+ The separate solutions were patched together, and the final global map was
+ transformed into spherical harmonics. Because of the latter, the maximum 
+ degree for this model is 1199 instead of 1200, but since it is based on the 
+ GRGM1200A model, it is counted among the GRGM1200 series.
+
+ Because this model is the result of a spherical harmonic transform of a map,
+ there are no uncertainties given on the coefficients, or on GM (the latter is
+ the same as for the GRGM1200A model). All uncertainty values are therefore 
+ set to zero.
+
+ The maximum degree of this model is 1199, because the grid spacing to do the
+ spherical harmonic transforms uses 'Lmax+1', and so in order to use a 0.15
+ degrees by 0.15 degrees grid, we use Lmax=1199.
+
+ This file is a pair of ASCII tables: a header table and a table of
+ 1439996 coefficients.  Definitions of the tables follow."
+
+START_TIME                   = 2012-03-01
+STOP_TIME                    = 2012-12-14
+PRODUCT_CREATION_TIME        = 2021-03-16
+PRODUCER_FULL_NAME           = "GSFC LEVEL-2 TEAM"
+PRODUCER_INSTITUTION_NAME    = "GODDARD SPACE FLIGHT CENTER"
+PRODUCT_VERSION_TYPE         = "FINAL"
+PRODUCER_ID                  = "GRAIL"
+
+
+OBJECT               = SHADR_HEADER_TABLE
+ROWS                       = 1
+COLUMNS                    = 8
+ROW_BYTES                  = 137
+ROW_SUFFIX_BYTES           = 107
+INTERCHANGE_FORMAT         = ASCII
+DESCRIPTION                = "The SHADR header includes
+descriptive information about the spherical harmonic
+coefficients which follow in SHADR_COEFFICIENTS_TABLE.
+The header consists of a single record of eight (delimited)
+data columns requiring 137 bytes, a pad of 105 unspecified
+ASCII characters, an ASCII carriage-return, and an ASCII
+line-feed."
+
+  OBJECT                   = COLUMN
+    NAME                         = "REFERENCE RADIUS"
+    DATA_TYPE                    = ASCII_REAL
+    START_BYTE                   = 1
+    BYTES                        = 23
+    FORMAT                       = "E23.16"
+    UNIT                         = "KILOMETER"
+    DESCRIPTION                  = "The assumed reference
+    radius of the spherical planet."
+  END_OBJECT               = COLUMN
+
+  OBJECT                   = COLUMN
+    NAME                         = "CONSTANT"
+    DATA_TYPE                    = ASCII_REAL
+    START_BYTE                   = 25
+    BYTES                        = 23
+    FORMAT                       = "E23.16"
+    UNIT                         = "N/A"
+    DESCRIPTION                  = "For a gravity field model
+    the assumed gravitational constant GM in kilometers cubed
+    per seconds squared for the planet.  For a topography
+    model, set to 1."
+  END_OBJECT               = COLUMN
+
+  OBJECT                   = COLUMN
+    NAME                         = "UNCERTAINTY IN CONSTANT"
+    DATA_TYPE                    = ASCII_REAL
+    START_BYTE                   = 49
+    BYTES                        = 23
+    FORMAT                       = "E23.16"
+    UNIT                         = "N/A"
+    DESCRIPTION                  = "For a gravity field model
+    the uncertainty in the gravitational constant GM in kilometers
+    cubed per seconds squared for the planet.  For a topography
+    model, set to 0."
+  END_OBJECT               = COLUMN
+
+  OBJECT                   = COLUMN
+    NAME                         = "DEGREE OF FIELD"
+    DATA_TYPE                    = ASCII_INTEGER
+    START_BYTE                   = 73
+    BYTES                        = 5
+    FORMAT                       = "I5"
+    UNIT                         = "N/A"
+    DESCRIPTION                  = "The degree of model field."
+  END_OBJECT               = COLUMN
+
+  OBJECT                   = COLUMN
+    NAME                         = "ORDER OF FIELD"
+    DATA_TYPE                    = ASCII_INTEGER
+    START_BYTE                   = 79
+    BYTES                        = 5
+    FORMAT                       = "I5"
+    UNIT                         = "N/A"
+    DESCRIPTION                  = "The order of the model field."
+  END_OBJECT               = COLUMN
+
+  OBJECT                   = COLUMN
+    NAME                         = "NORMALIZATION STATE"
+    DATA_TYPE                    = ASCII_INTEGER
+    START_BYTE                   = 85
+    BYTES                        = 5
+    FORMAT                       = "I5"
+    UNIT                         = "N/A"
+    DESCRIPTION                  = "The normalization indicator.
+    For gravity field:
+        0   coefficients are unnormalized
+        1   coefficients are normalized
+        2   other."
+  END_OBJECT               = COLUMN
+
+  OBJECT                   = COLUMN
+    NAME                         = "REFERENCE LONGITUDE"
+    POSITIVE_LONGITUDE_DIRECTION = "EAST"
+    DATA_TYPE                    = ASCII_REAL
+    START_BYTE                   = 91
+    BYTES                        = 23
+    FORMAT                       = "E23.16"
+    UNIT                         = "DEGREE"
+    DESCRIPTION                  = "The reference longitude for
+    the spherical harmonic expansion; normally 0."
+  END_OBJECT               = COLUMN
+
+  OBJECT                   = COLUMN
+    NAME                         = "REFERENCE LATITUDE"
+    DATA_TYPE                    = ASCII_REAL
+    START_BYTE                   = 115
+    BYTES                        = 23
+    FORMAT                       = "E23.16"
+    UNIT                         = "DEGREE"
+    DESCRIPTION                  = "The reference latitude for
+    the spherical harmonic expansion; normally 0."
+  END_OBJECT               = COLUMN
+
+END_OBJECT           = SHADR_HEADER_TABLE
+
+OBJECT               = SHADR_COEFFICIENTS_TABLE
+  ROWS                     = 720599
+  COLUMNS                  = 6
+  ROW_BYTES                = 107
+  ROW_SUFFIX_BYTES         = 15
+  INTERCHANGE_FORMAT       = ASCII
+  DESCRIPTION              = "The SHADR coefficients table
+  contains the coefficients for the spherical harmonic model.
+  Each row in the table contains the degree index m, the
+  order index n, the coefficients Cmn and Smn, and the
+  uncertainties in Cmn and Smn. The (delimited) data
+  require 107 ASCII characters; these are followed by a pad
+  of 13 unspecified ASCII characters, an ASCII carriage-
+  return, and an ASCII line-feed."
+
+  OBJECT                   = COLUMN
+    NAME                         = "COEFFICIENT DEGREE"
+    DATA_TYPE                    = ASCII_INTEGER
+    START_BYTE                   = 1
+    BYTES                        = 5
+    FORMAT                       = "I5"
+    UNIT                         = "N/A"
+    DESCRIPTION                  = "The degree index m of the
+    C and S coefficients in this record."
+  END_OBJECT               = COLUMN
+
+  OBJECT                   = COLUMN
+    NAME                         = "COEFFICIENT ORDER"
+    DATA_TYPE                    = ASCII_INTEGER
+    START_BYTE                   = 7
+    BYTES                        = 5
+    FORMAT                       = "I5"
+    UNIT                         = "N/A"
+    DESCRIPTION                  = "The order index n of the
+    C and S coefficients in this record."
+  END_OBJECT               = COLUMN
+
+  OBJECT                   = COLUMN
+    NAME                         = "C"
+    DATA_TYPE                    = ASCII_REAL
+    START_BYTE                   = 13
+    BYTES                        = 23
+    FORMAT                       = "E23.16"
+    UNIT                         = "N/A"
+    DESCRIPTION                  = "The coefficient Cmn
+    for this spherical harmonic model."
+  END_OBJECT               = COLUMN
+
+  OBJECT                   = COLUMN
+    NAME                         = "S"
+    DATA_TYPE                    = ASCII_REAL
+    START_BYTE                   = 37
+    BYTES                        = 23
+    FORMAT                       = "E23.16"
+    UNIT                         = "N/A"
+    DESCRIPTION                  = "The coefficient Smn
+    for this spherical harmonic model."
+  END_OBJECT               = COLUMN
+
+  OBJECT                   = COLUMN
+    NAME                         = "C UNCERTAINTY"
+    DATA_TYPE                    = ASCII_REAL
+    START_BYTE                   = 61
+    BYTES                        = 23
+    FORMAT                       = "E23.16"
+    UNIT                         = "N/A"
+    DESCRIPTION                  = "The uncertainty in the
+    coefficient Cmn for this spherical harmonic model."
+  END_OBJECT               = COLUMN
+
+  OBJECT                   = COLUMN
+    NAME                         = "S UNCERTAINTY"
+    DATA_TYPE                    = ASCII_REAL
+    START_BYTE                   = 85
+    BYTES                        = 23
+    FORMAT                       = "E23.16"
+    UNIT                         = "N/A"
+    DESCRIPTION                  = "The uncertainty in the
+    coefficient Smn for this spherical harmonic model."
+  END_OBJECT               = COLUMN
+
+END_OBJECT           = SHADR_COEFFICIENTS_TABLE
+
+END
