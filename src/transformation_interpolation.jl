@@ -37,8 +37,10 @@ struct InterpolatedTransformation
         frame_to::String,
         rescale_epoch::Bool,
         TU::Float64;
-        axis_sequence::Tuple{Int, Int, Int} = (3, 1, 3)
+        axis_sequence::Tuple{Int, Int, Int} = (3, 1, 3),
+        spline_order::Int = 3,
     )
+        @assert 1 <= spline_order <= 5
         if rescale_epoch
             @warn "rescale_epoch == true is buggy"
             times_input = (ets .- ets[1]) / TU
@@ -51,9 +53,9 @@ struct InterpolatedTransformation
             euler_angles[:,idx] .= m2eul(T, axis_sequence...)
         end
         splines = [
-            Spline1D(times_input, euler_angles[1,:]),
-            Spline1D(times_input, euler_angles[2,:]),
-            Spline1D(times_input, euler_angles[3,:]),
+            Spline1D(times_input, euler_angles[1,:]; k=spline_order, bc="error"),
+            Spline1D(times_input, euler_angles[2,:]; k=spline_order, bc="error"),
+            Spline1D(times_input, euler_angles[3,:]; k=spline_order, bc="error"),
         ]
         new((ets[1], ets[end]), frame_from, frame_to, axis_sequence, splines, rescale_epoch, TU)
     end

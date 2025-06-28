@@ -51,16 +51,16 @@ function dfdx_Nbody_Interp(x, u, params, t)
 end
 
 
-"""Right-hand side of N-body equations of motion with STM compatible with `DifferentialEquations.jl`"""
-function eom_stm_Nbody_Interp_fd!(dx_stm, x_stm, params, t)
-    dx_stm[1:6] = eom_Nbody_Interp(x_stm[1:6], params, t)
-    A = ForwardDiff.jacobian(x -> HFEM.eom_Nbody_Interp(x, params, t), deepcopy(x_stm[1:6]))
-    dx_stm[7:42] = reshape((A * reshape(x_stm[7:42],6,6)')', 36)
-    return nothing
-end
-
-
 """Evaluate Jacobian of N-body problem"""
 function dfdx_Nbody_Interp_fd(x, u, params, t)
     return ForwardDiff.jacobian(x -> HFEM.eom_Nbody_Interp(x, params, t), x)
+end
+
+
+"""Right-hand side of N-body equations of motion with STM compatible with `DifferentialEquations.jl`"""
+function eom_stm_Nbody_Interp_fd!(dx_stm, x_stm, params, t)
+    dx_stm[1:6] = eom_Nbody_Interp(x_stm[1:6], params, t)
+    A = dfdx_Nbody_Interp_fd(x_stm[1:6], 0.0, params, t)
+    dx_stm[7:42] = reshape((A * reshape(x_stm[7:42],6,6)')', 36)
+    return nothing
 end

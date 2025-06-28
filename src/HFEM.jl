@@ -17,7 +17,9 @@ include("parameters.jl")
 
 include("eoms/eom_Nbody_SPICE.jl")
 include("eoms/eom_Nbody_Interp.jl")
+
 include("eoms/eom_NbodySH_SPICE.jl")
+include("eoms/eom_NbodySH_Interp.jl")
 
 include("events.jl")
 
@@ -28,6 +30,10 @@ export HFEMParameters
 export eom_Nbody_SPICE!, eom_stm_Nbody_SPICE!, dfdx_Nbody_SPICE
 export eom_Nbody_Interp!, eom_Nbody_Interp, eom_stm_Nbody_Interp!, dfdx_Nbody_Interp
 export eom_stm_Nbody_Interp_fd!, dfdx_Nbody_Interp_fd
+
+export eom_NbodySH_SPICE!
+export eom_NbodySH_Interp!, eom_NbodySH_Interp
+
 
 export get_trueanomaly_event
 

@@ -1,7 +1,7 @@
 """Perturbations due to spherical harmonics"""
 
 
-function cart2sph(rvec::Vector{Float64})
+function cart2sph(rvec::Vector)
     x,y,z = rvec
     lmb = atan(y,x)
     phi = atan(z,sqrt(x^2 + y^2))
@@ -137,7 +137,7 @@ Get acceleration due to potential up to degree nmax in planet-centered planet-fi
 - `accel_PCPF::Vector{Real}`: acceleration in planet-centered planet-fixed frame
 """
 function spherical_harmonics_accel_PCPF(
-    rvec_PCPF::Vector{Float64},
+    rvec_PCPF::Vector,
     Cnm_dict::Dict, Snm_dict::Dict,
     GM::Real, R::Real, nmax::Int
 )
@@ -154,7 +154,7 @@ end
 
 function spherical_harmonics_accel(
     T_inr2pcpf::Matrix{Float64},
-    rvec_integrator::Vector{Float64},
+    rvec_integrator::Vector,
     Cnm_dict::Dict,
     Snm_dict::Dict,
     GM::Real,

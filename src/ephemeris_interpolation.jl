@@ -13,8 +13,10 @@ struct InterpolatedEphemeris
         ets,
         rvs,
         rescale_epoch::Bool,
-        tstar::Float64
+        tstar::Float64,
+        spline_order::Int = 3,
     )
+        @assert 1 <= spline_order <= 5
         if rescale_epoch
             @warn "rescale_epoch == true is buggy"
             times_input = (ets .- ets[1]) / tstar
@@ -22,12 +24,12 @@ struct InterpolatedEphemeris
             times_input = ets
         end
         splines = [
-            Spline1D(times_input, rvs[1,:]),
-            Spline1D(times_input, rvs[2,:]),
-            Spline1D(times_input, rvs[3,:]),
-            Spline1D(times_input, rvs[4,:]),
-            Spline1D(times_input, rvs[5,:]),
-            Spline1D(times_input, rvs[6,:]),
+            Spline1D(times_input, rvs[1,:]; k=spline_order, bc="error"),
+            Spline1D(times_input, rvs[2,:]; k=spline_order, bc="error"),
+            Spline1D(times_input, rvs[3,:]; k=spline_order, bc="error"),
+            Spline1D(times_input, rvs[4,:]; k=spline_order, bc="error"),
+            Spline1D(times_input, rvs[5,:]; k=spline_order, bc="error"),
+            Spline1D(times_input, rvs[6,:]; k=spline_order, bc="error"),
         ]
         new(naif_id, (ets[1], ets[end]), splines, rescale_epoch, tstar)
     end

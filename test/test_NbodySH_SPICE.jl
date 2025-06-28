@@ -1,5 +1,5 @@
 """
-Test spherical harmonics
+Test eom_NbodySH_SPICE
 """
 
 using LinearAlgebra
