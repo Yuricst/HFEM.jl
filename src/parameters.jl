@@ -13,6 +13,8 @@ mutable struct HFEMParameters
     naif_frame::String
     abcorr::String
     interpolated_ephems::Union{Nothing,Vector{InterpolatedEphemeris}}
+    spherical_harmonics_data::Union{Nothing,Dict}
+    frame_PCPF::Union{Nothing,String}
 
     f_jacobian::Union{Nothing,Function}
     Rs::Vector{Float64}
@@ -35,6 +37,9 @@ function HFEMParameters(
     naif_ids::Vector{String},
     naif_frame::String,
     abcorr::String;
+    filepath_spherical_harmonics::Union{Nothing,String} = nothing,
+    nmax::Int = 4,
+    frame_PCPF::Union{Nothing,String} = nothing,
     get_jacobian_func::Bool = true,
     interpolate_ephem_span::Union{Nothing,Vector{Float64}} = nothing,
     interpolation_time_step::Real = 3600.0,
@@ -63,10 +68,19 @@ function HFEMParameters(
         end
     end
 
+    if !isnothing(filepath_spherical_harmonics)
+        spherical_harmonics_data = load_spherical_harmonics(filepath_spherical_harmonics, nmax, true)
+        #@assert isnothing(frame_PCPF) == false, "frame_PCPF must be provided when spherical harmonics are used"
+    else
+        spherical_harmonics_data = nothing
+    end
+
     return HFEMParameters(
         et0, DU, TU, VU,
         GMs, mus, naif_ids, naif_frame, abcorr,
         interpolated_ephems,
+        spherical_harmonics_data,
+        frame_PCPF,
         f_jacobian, Rs
     )
 end

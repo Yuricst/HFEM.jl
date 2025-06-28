@@ -7,11 +7,16 @@ using SPICE
 import Symbolics
 
 include("perturbations/third_body.jl")
+include("perturbations/spherical_harmonics.jl")
+
 include("jacobians_symbolic.jl")
 include("ephemeris_interpolation.jl")
 include("parameters.jl")
+
 include("eoms/eom_Nbody_SPICE.jl")
 include("eoms/eom_Nbody_Interp.jl")
+include("eoms/eom_NbodySH_SPICE.jl")
+
 include("events.jl")
 
 export InterpolatedEphemeris
