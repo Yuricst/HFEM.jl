@@ -144,7 +144,7 @@ The table below summarizes the equations of motion. Note:
 
 | eom                   | eom + STM (analytical)  | eom + STM (ForwardDiff)      | `EnsembleThreads` compatibility |
 |-----------------------|-------------------------|------------------------------|---------------------------------|
-| `eom_Nbody_SPICE!`    | `eom_stm_Nbody_SPICE!`  |                              | no                              |
+| `eom_Nbody_SPICE!`    | `eom_stm_Nbody_SPICE!`  | `eom_stm_Nbody_SPICE_fd!`    | no                              |
 | `eom_Nbody_Interp!`   | `eom_stm_Nbody_Interp!` | `eom_stm_Nbody_Interp_fd!`   | yes                             |
 | `eom_NbodySH_SPICE!`  |                         | `eom_stm_NbodySH_SPICE_fd!`  | no                              |
 | `eom_NbodySH_Interp!` |                         | `eom_stm_NbodySH_Interp_fd!` | yes                             |

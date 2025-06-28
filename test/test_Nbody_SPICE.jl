@@ -81,16 +81,25 @@ test_eom_stm_Nbody_SPICE = function(;verbose::Bool = false)
         HFEM.eom_Nbody_SPICE!(_f_eval, x0_copy, parameters, 0.0)
         jac_numerical[:,i] = (_f_eval - f_eval) / h
     end
-    # println("Analytical Jacobian:")
-    # print_matrix(jac_analytical)
-    # println()
-    # println("Numerical Jacobian:")
-    # print_matrix(jac_numerical)
-    # println()
-    # println("Diff:")
-    # print_matrix(jac_analytical - jac_numerical)
+    jac_numerical_fd = HFEM.dfdx_Nbody_SPICE_fd(x0, 0.0, parameters, 0.0)
+    if verbose
+        println("Analytical Jacobian:")
+        print_matrix(jac_analytical)
+        println()
+        println("Numerical Jacobian:")
+        print_matrix(jac_numerical)
+        println()
+        println("ForwardDiff Jacobian:")
+        print_matrix(jac_numerical_fd)
+        println()
+        println("Diff analytical - numerical:")
+        print_matrix(jac_analytical - jac_numerical)
+        println()
+        println("Diff analytical - ForwardDiff:")
+        print_matrix(jac_analytical - jac_numerical_fd)
+    end
     @test maximum(abs.(jac_analytical - jac_numerical)) < 1e-6
-
+    @test maximum(abs.(jac_analytical - jac_numerical_fd)) < 1e-12
 
     # time span (in canonical scale)
     tspan = (0.0, 1.0)

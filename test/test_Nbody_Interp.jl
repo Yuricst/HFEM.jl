@@ -110,6 +110,7 @@ test_eom_stm_Nbody_Interp = function(;verbose::Bool = false)
         println()
     end
     @test maximum(abs.(jac_analytical - jac_numerical)) < 1e-6
+    @test maximum(abs.(jac_analytical - jac_numerical_fd)) < 1e-12
 
     # time span (in canonical scale)
     tspan = (0.0, 7*86400/parameters.TU)
