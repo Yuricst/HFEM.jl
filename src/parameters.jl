@@ -15,6 +15,7 @@ mutable struct HFEMParameters
     interpolated_ephems::Union{Nothing,Vector{InterpolatedEphemeris}}
     spherical_harmonics_data::Union{Nothing,Dict}
     frame_PCPF::Union{Nothing,String}
+    interpolated_transformation::Union{Nothing,InterpolatedTransformation}
 
     f_jacobian::Union{Nothing,Function}
     Rs::Vector{Float64}
@@ -56,15 +57,29 @@ function HFEMParameters(
     end
     Rs = zeros(3 * (length(mus)-1))  # storage for third-body positions
 
-    if isnothing(interpolate_ephem_span)
-        interpolated_ephems = nothing
-    else
+    # initialize interpolated structs
+    interpolated_ephems = nothing
+    interpolated_transformation = nothing
+
+    if !isnothing(interpolate_ephem_span)
+        # interpolate ephemerides of third-bodies
         N_interp = Int(ceil((interpolate_ephem_span[2] - interpolate_ephem_span[1]) / interpolation_time_step))
         ets_interp = range(interpolate_ephem_span[1], interpolate_ephem_span[2], N_interp)
         interpolated_ephems = []
         for ID in naif_ids[2:end]
             rvs_interp = hcat([spkezr(ID, et, naif_frame, abcorr, naif_ids[1])[1] for et in ets_interp]...)
-            push!(interpolated_ephems, HFEM.InterpolatedEphemeris(ID, ets_interp, rvs_interp, false, TU))
+            push!(interpolated_ephems, InterpolatedEphemeris(ID, ets_interp, rvs_interp, false, TU))
+        end
+
+        # interpolate transformation matrix from inertial frame to PCPF frame
+        if !isnothing(frame_PCPF)
+            interpolated_transformation = InterpolatedTransformation(
+                ets_interp,
+                naif_frame,
+                frame_PCPF,
+                false,
+                TU,
+            )
         end
     end
 
@@ -81,6 +96,7 @@ function HFEMParameters(
         interpolated_ephems,
         spherical_harmonics_data,
         frame_PCPF,
+        interpolated_transformation,
         f_jacobian, Rs
     )
 end
