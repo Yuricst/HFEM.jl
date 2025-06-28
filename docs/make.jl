@@ -16,7 +16,7 @@ makedocs(
     # options
     pages = [
 		"Home" => "index.md",
-        "Equations of motion" => "eom.md",
+        "Overview" => "overview.md",
         # "Tutorials" => Any[
         #     "Basics" => "basics.md",
         # ],
