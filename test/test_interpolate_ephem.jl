@@ -3,9 +3,9 @@
 using LinearAlgebra
 using SPICE
 
-if !@isdefined(HFEM)
+#if !@isdefined(HFEM)
     include(joinpath(@__DIR__, "../src/HFEM.jl"))
-end
+#end
 
 
 test_interpolate_ephem = function ()

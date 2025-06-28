@@ -12,6 +12,7 @@ include("perturbations/spherical_harmonics.jl")
 
 include("jacobians_symbolic.jl")
 include("ephemeris_interpolation.jl")
+include("transformation_interpolation.jl")
 include("parameters.jl")
 
 include("eoms/eom_Nbody_SPICE.jl")
