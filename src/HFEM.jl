@@ -1,6 +1,7 @@
 module HFEM
 
 using Dierckx
+using ForwardDiff
 using LinearAlgebra
 using Printf
 using SPICE
