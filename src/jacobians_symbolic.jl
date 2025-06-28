@@ -15,17 +15,18 @@ function symbolic_Nbody_jacobian(N::Int)
     
     # third-body accelerations
     for i = 2:N
-        R3 = sqrt(Rs[1+3(i-2)]^2 + Rs[2+3(i-2)]^2 + Rs[3+3(i-2)]^2)^3
-        snorm2 = (x - Rs[1+3(i-2)])^2 + (y - Rs[2+3(i-2)])^2 + (z - Rs[3+3(i-2)])^2
+        R2 = Rs[1+3(i-2)]^2 + Rs[2+3(i-2)]^2 + Rs[3+3(i-2)]^2
+        R3 = R2^(3/2)
+        d3 = ((x - Rs[1+3(i-2)])^2 + (y - Rs[2+3(i-2)])^2 + (z - Rs[3+3(i-2)])^2)^(3/2)
 
         q = (x * (x - 2*(x - Rs[1+3(i-2)])) +
-            y * (y - 2*(y - Rs[2+3(i-2)])) +
-            z * (z - 2*(z - Rs[3+3(i-2)]))) / snorm2
+             y * (y - 2*(y - Rs[2+3(i-2)])) +
+             z * (z - 2*(z - Rs[3+3(i-2)]))) / R2
         F = q * (3 + 3q + q^2)/(1 + sqrt(1+q)^3)
 
-        ax += -mus[i] / R3 * (x + F*(x - Rs[1+3(i-2)]))
-        ay += -mus[i] / R3 * (y + F*(y - Rs[2+3(i-2)]))
-        az += -mus[i] / R3 * (z + F*(z - Rs[3+3(i-2)]))
+        ax += -mus[i] / d3 * (x + F*(x - Rs[1+3(i-2)]))
+        ay += -mus[i] / d3 * (y + F*(y - Rs[2+3(i-2)]))
+        az += -mus[i] / d3 * (z + F*(z - Rs[3+3(i-2)]))
     end
 
     Uxx = [

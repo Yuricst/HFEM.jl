@@ -109,17 +109,19 @@ test_eom_stm_Nbody_SPICE = function(;verbose::Bool = false)
         sol_ptrb = solve(ODEProblem(HFEM.eom_Nbody_SPICE!, x0_copy, tspan, parameters), Vern7(), reltol=1e-12, abstol=1e-12)
         STM_numerical[:,i] = (sol_ptrb.u[end][1:6] - sol.u[end][1:6]) / h
     end
-    # println("Analytical STM:")
-    # print_matrix(STM_analytical)
-    # println()
-    # println("Numerical STM:")
-    # print_matrix(STM_numerical)
-    # println()
-    # println("Diff:")
-    # print_matrix(STM_analytical - STM_numerical)
+    if verbose
+        println("Analytical STM:")
+        print_matrix(STM_analytical)
+        println()
+        println("Numerical STM:")
+        print_matrix(STM_numerical)
+        println()
+        println("Diff:")
+        print_matrix(STM_analytical - STM_numerical)
+    end
     @test maximum(abs.(STM_analytical - STM_numerical)) < 1e-6
 end
 
 
 test_eom_Nbody_SPICE()
-test_eom_stm_Nbody_SPICE(verbose = true)
+test_eom_stm_Nbody_SPICE(verbose = false)
