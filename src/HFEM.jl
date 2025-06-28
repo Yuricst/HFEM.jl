@@ -27,12 +27,12 @@ export InterpolatedEphemeris
 export InterpolatedTransformation
 export HFEMParameters
 
-export eom_Nbody_SPICE!, eom_stm_Nbody_SPICE!, dfdx_Nbody_SPICE
-export eom_Nbody_Interp!, eom_Nbody_Interp, eom_stm_Nbody_Interp!, dfdx_Nbody_Interp
+export eom_Nbody_SPICE!, dfdx_Nbody_SPICE, eom_stm_Nbody_SPICE!
+export eom_Nbody_Interp!, eom_Nbody_Interp, dfdx_Nbody_Interp, eom_stm_Nbody_Interp!
 export eom_stm_Nbody_Interp_fd!, dfdx_Nbody_Interp_fd
 
-export eom_NbodySH_SPICE!
-export eom_NbodySH_Interp!, eom_NbodySH_Interp
+export eom_NbodySH_SPICE!, dfdx_NbodySH_SPICE_fd, eom_stm_NbodySH_SPICE_fd!
+export eom_NbodySH_Interp!, eom_NbodySH_Interp, dfdx_NbodySH_Interp_fd, eom_stm_NbodySH_Interp_fd!
 
 
 export get_trueanomaly_event
