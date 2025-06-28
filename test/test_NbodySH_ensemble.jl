@@ -12,7 +12,7 @@ if !@isdefined(HFEM)
 end
 
 
-test_NbodySH_Interp_ensemble = function()
+test_NbodySH_Interp_ensemble = function(;verbose = false)
     # define parameters
     GMs = [
         4.9028000661637961E+03,
@@ -79,8 +79,8 @@ test_NbodySH_Interp_ensemble = function()
     end
 
     # check consistency between serial & parallel runs
-    for i = 1:N_traj
-        @test sols_ensemble[i].u[end] == sols_serial[i].u[end]
+    for (sol_ensemble, sol_serial) in zip(sols_ensemble, sols_serial)
+        @test sol_ensemble.u[end] == sol_serial.u[end]
         #@test norm(sols_ensemble.u[i][end] - sols_serial[i].u[end]) < 1e-16
     end
 
@@ -111,16 +111,18 @@ test_NbodySH_Interp_ensemble = function()
     end
 
     # check consistency between serial & parallel runs
-    for i = 1:N_traj
-        @test sols_stm_ensemble[i].u[end] == sols_stm_serial[i].u[end]
-        # @show sols_stm_ensemble[i].u[end][1:6]
-        # @show sols_stm_serial[i].u[end][1:6]
-        # print_matrix(reshape(sols_stm_ensemble[i].u[end][7:end], (6,6))')
-        # println()
-        # print_matrix(reshape(sols_stm_serial[i].u[end][7:end], (6,6))')
-        # println()
+    for (sol_stm_ensemble, sol_stm_serial) in zip(sols_stm_ensemble, sols_stm_serial)
+        @test sol_stm_ensemble.u[end] == sol_stm_serial.u[end]
+        if verbose
+            @show sol_stm_ensemble.u[end][1:6]
+            @show sol_stm_serial.u[end][1:6]
+            print_matrix(reshape(sol_stm_ensemble.u[end][7:end], (6,6))')
+            println()
+            print_matrix(reshape(sol_stm_serial.u[end][7:end], (6,6))')
+            println()
+        end
     end
 end
 
 
-test_NbodySH_Interp_ensemble()
+test_NbodySH_Interp_ensemble(;verbose = false)
