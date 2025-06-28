@@ -190,5 +190,5 @@ function test_eom_stm_NbodySH_Interp(;verbose=false)
 end
 
 
-#test_eom_NbodySH_SPICE()
+test_eom_NbodySH_SPICE()
 test_eom_stm_NbodySH_Interp(;verbose = false)

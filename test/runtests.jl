@@ -28,6 +28,7 @@ end
 
 @testset "Ephemeris interpolation" begin
     include("test_interpolate_ephem.jl")
+    include("test_interpolate_transformation.jl")
 end
 
 @testset "N-body ODE             " begin
