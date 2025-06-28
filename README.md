@@ -1,8 +1,12 @@
-# `HFEM.jl`: High-Fidelity Ephemeris Model for Astrodynamics
+<p align="center">
+  <img src="docs/assets/logo.png" alt="HFEM.jl Logo" width="75%"/>
+</p>
 
-![test workflow](https://github.com/Yuricst/HFEM.jl/actions/workflows/runtest.yml/badge.svg) 
 
-[📚Read the docs📚](https://yuricst.github.io/HFEM.jl/)
+<p align="center">
+  <img src="https://github.com/Yuricst/HFEM.jl/actions/workflows/runtest.yml/badge.svg" alt="test workflow"/>
+  <a href="https://yuricst.github.io/HFEM.jl/">📚Read the docs📚</a>
+</p>
 
 `HFEM.jl` is a minimal implementation of high-fidelity ephemeris model dynamics compatible with the [`OrdinaryDiffEq.jl`](https://github.com/SciML/OrdinaryDiffEq.jl) ecosystem (i.e. its solvers, parallelism, etc.).
 

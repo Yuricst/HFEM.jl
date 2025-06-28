@@ -28,7 +28,4 @@ makedocs(
 		# 	# "Plotting" => "api/api_plot.md",
 		# ],
     ],
-	# assets = [
-    #     "./assets/logo.png",
-    # ],
 )
