@@ -42,11 +42,11 @@ test_interpolate_ephem = function ()
     Ts_interp = [HFEM.pxform(transformation_interp, et) for et in ets_test]
 
     for (T_spice, T_interp) in zip(Ts_spice, Ts_interp)
-        println("SPICE T:")
-        print_matrix(T_spice)
-        println("Interpolated T:")
-        print_matrix(T_interp)
-        println()
+        # println("SPICE T:")
+        # print_matrix(T_spice)
+        # println("Interpolated T:")
+        # print_matrix(T_interp)
+        # println()
         @test T_spice ≈ T_interp atol=1e-11
     end
 end
