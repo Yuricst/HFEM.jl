@@ -9,7 +9,6 @@ include(joinpath(@__DIR__, "../src/HFEM.jl"))
 # furnish spice kernels
 furnsh_kernels()
 
-
 @testset "Ephemeris interpolation" begin
     include("test_interpolate_ephem.jl")
     include("test_interpolate_transformation.jl")
