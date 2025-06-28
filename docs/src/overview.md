@@ -25,24 +25,24 @@ In `HFEM.jl`, the dynamcis consists of the central gravitational term, together 
 - drag (todo)
 
 ```math
-\dot{\boldsymbol{x}} = 
+\dot{\boldsymbol{x}}(t) = 
 \begin{bmatrix}
-    \dot{\boldsymbol{r}} \\ \dot{\boldsymbol{v}}
+    \dot{\boldsymbol{r}}(t) \\ \dot{\boldsymbol{v}}(t)
 \end{bmatrix} = 
 \begin{bmatrix}
-    \boldsymbol{v}
-    \\ -\dfrac{\mu}{\| \boldsymbol{r} \|_2^3}\boldsymbol{r}
+    \boldsymbol{v}(t)
+    \\ -\dfrac{\mu}{\| \boldsymbol{r}(t) \|_2^3}\boldsymbol{r}(t)
 \end{bmatrix}
 +
 \sum_{i} 
 \begin{bmatrix}
     \boldsymbol{0}_{3 \times 1} 
-    \\ \boldsymbol{a}_{\mathrm{3bd},i} 
+    \\ \boldsymbol{a}_{\mathrm{3bd},i}(t)
 \end{bmatrix}
 + 
 \begin{bmatrix}
     \boldsymbol{0}_{3 \times 1}
-    \\ \boldsymbol{a}_{\mathrm{SH},n_{\max}}
+    \\ \boldsymbol{a}_{\mathrm{SH},n_{\max}}(t)
 \end{bmatrix}
 ```
 
@@ -51,11 +51,11 @@ In `HFEM.jl`, the dynamcis consists of the central gravitational term, together 
 The third-body perturbation due to body $i$, $\boldsymbol{a}_{\mathrm{3bd},i}$, is given by
 
 ```math
-\boldsymbol{a}_{\mathrm{3bd},i} 
+\boldsymbol{a}_{\mathrm{3bd},i}(t)
 = -\mu_i \left(
-    \dfrac{\boldsymbol{r} - \boldsymbol{r}_i}{\| \boldsymbol{r} - \boldsymbol{r}_i \|_2^3}
+    \dfrac{\boldsymbol{r}(t) - \boldsymbol{r}_i(t)}{\| \boldsymbol{r}(t) - \boldsymbol{r}_i(t) \|_2^3}
     +
-    \dfrac{\boldsymbol{r}_i}{\| \boldsymbol{r}_i \|_2^3}
+    \dfrac{\boldsymbol{r}_i(t)}{\| \boldsymbol{r}_i(t) \|_2^3}
 \right)
 ```
 
@@ -63,8 +63,8 @@ where $\boldsymbol{r}_i$ is the position vector of the perturbing body.
 In `HEFM.jl`, this term is implemented using Battin's $F(q)$ function:
 
 ```math
-\boldsymbol{a}_{\mathrm{3bd},i} =
--\dfrac{\mu_i}{\| \boldsymbol{r} - \boldsymbol{r}_i \|_2^3} (\boldsymbol{r} + F(q_i)\boldsymbol{r}_i)
+\boldsymbol{a}_{\mathrm{3bd},i}(t) =
+-\dfrac{\mu_i}{\| \boldsymbol{r}(t) - \boldsymbol{r}_i(t) \|_2^3} (\boldsymbol{r}(t) + F(q_i)\boldsymbol{r}_i(t))
 ```
 
 where $F(q_i)$ is given by
@@ -76,12 +76,57 @@ F(q_i) = q_i \left( \dfrac{3 + 3q_i + q_i^2}{1 + (\sqrt{1 + q_i})^3} \right)
 and $q_i$ is 
 
 ```math
-q_i = \dfrac{\boldsymbol{r}^T (\boldsymbol{r} - 2\boldsymbol{r}_i)}{\boldsymbol{r}_i^T \boldsymbol{r}_i}
+q_i = \dfrac{\boldsymbol{r}(t)^T (\boldsymbol{r}(t) - 2\boldsymbol{r}_i(t))}{\boldsymbol{r}_i(t)^T \boldsymbol{r}_i(t)}
 ```
 
 ### Spherical Harmonics
 
-TODO
+The spherical harmonics perturbation $\boldsymbol{a}_{\mathrm{SH},n_{\max}}$ is given by
+
+```math
+\boldsymbol{a}_{\mathrm{SH},n_{\max}} = 
+\sum_{n=2}^{n_{\max}} \sum_{m=0}^n \boldsymbol{a}_{\mathrm{SH},nm}
+```
+
+where $\boldsymbol{a}_{\mathrm{SH},nm}$ is given by
+
+```math
+\boldsymbol{a}_{\mathrm{SH},nm} = 
+\begin{bmatrix}
+    \ddot{x}_{n m} \\ \ddot{y}_{n m} \\ \ddot{z}_{n m}
+\end{bmatrix}
+```
+
+where
+
+```math
+\begin{aligned}
+& \ddot{x}_{n m} =
+\begin{cases}
+    \dfrac{G M}{R_{\oplus}^2} \cdot\left\{-C_{n 0} V_{n+1,1}\right\} & m = 0 \\[1.0em]
+    \dfrac{G M}{R_{\oplus}^2} \cdot \dfrac{1}{2} \cdot\left\{\left(-C_{n m} V_{n+1, m+1}-S_{n m} W_{n+1, m+1}\right) + \dfrac{(n-m+2)!}{(n-m)!} \cdot\left(+C_{n m} V_{n+1, m-1}+S_{n m} W_{n+1, m-1}\right)\right\} & m > 0
+\end{cases}
+\\[1.0em]
+& \ddot{y}_{n m} = 
+\begin{cases}
+    \dfrac{G M}{R_{\oplus}^2} \cdot\left\{-C_{n 0} W_{n+1,1}\right\} & m = 0 \\[1.0em]
+    \dfrac{G M}{R_{\oplus}^2} \cdot \dfrac{1}{2} \cdot\left\{\left(-C_{n m} \cdot W_{n+1, m+1}+S_{n m} \cdot V_{n+1, m+1}\right) + \dfrac{(n-m+2)!}{(n-m)!} \cdot\left(-C_{n m} W_{n+1, m-1}+S_{n m} V_{n+1, m-1}\right)\right\} & m > 0
+\end{cases}
+\\[1.0em]
+& \ddot{z}_{n m} = \frac{G M}{R_{\oplus}^2} \cdot\left\{(n-m+1) \cdot\left(-C_{n m} V_{n+1, m}-S_{n m} W_{n+1, m}\right)\right\}
+\end{aligned}
+```
+
+and 
+
+```math
+\begin{aligned}
+& V_{n m}=\left(\frac{R_{\oplus}}{r}\right)^{n+1} \cdot P_{n m}(\sin \phi) \cdot \cos m \lambda \\
+& W_{n m}=\left(\frac{R_{\oplus}}{r}\right)^{n+1} \cdot P_{n m}(\sin \phi) \cdot \sin m \lambda
+\end{aligned}
+```
+
+(c.f. Montenbruck & Gill Chapter 3.2)
 
 
 ### Solar Radiation Pressure 
