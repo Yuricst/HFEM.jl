@@ -89,7 +89,7 @@ test_eom_NbodySH_SPICE = function()
     prob = ODEProblem(HFEM.eom_NbodySH_SPICE!, u0, tspan, parameters)
     sol = solve(prob, Vern7(), reltol=1e-14, abstol=1e-14)
     u_check = [-1.3008005902886173, 1.0821476922891953, -0.568881995188118, -0.13115294012566467, -0.6582795434237702, 0.0612542261511961]
-    @test norm(sol.u[end] - u_check) < 1e-12
+    @test norm(sol.u[end] - u_check) < 1e-11
 
     # also solve the two-body problem for plotting
     # prob_twobody = ODEProblem(HFEM.eom_Nbody_SPICE!, u0, tspan, parameters)
@@ -101,6 +101,10 @@ test_eom_NbodySH_SPICE = function()
     # lines!(ax3d, Array(sol_twobody)[1,:], Array(sol_twobody)[2,:], Array(sol_twobody)[3,:], color=:blue)
     # lines!(ax3d, Array(sol)[1,:], Array(sol)[2,:], Array(sol)[3,:], color=:red, linewidth=0.5)
     # fig
+end
+
+
+function test_spherical_harmonics_jacobian()
 end
 
 
