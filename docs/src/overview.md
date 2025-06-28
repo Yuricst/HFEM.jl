@@ -17,7 +17,12 @@ There are a number of equations of motion implemented in `HFEM.jl`.
 
 ## Dynamics model
 
-The dynamics model is of the form 
+In `HFEM.jl`, the dynamcis consists of the central gravitational term, together with the following perturbations:
+
+- third-body perturbations
+- spherical harmonics
+- solar radiation pressure (todo)
+- drag (todo)
 
 ```math
 \dot{\boldsymbol{x}} = 
@@ -31,7 +36,7 @@ The dynamics model is of the form
 +
 \sum_{i} 
 \begin{bmatrix}
-    \boldsymbol{0}_{3 \times 1}
+    \boldsymbol{0}_{3 \times 1} 
     \\ \boldsymbol{a}_{\mathrm{3bd},i} 
 \end{bmatrix}
 + 
@@ -59,7 +64,7 @@ In `HEFM.jl`, this term is implemented using Battin's $F(q)$ function:
 
 ```math
 \boldsymbol{a}_{\mathrm{3bd},i} =
-\dfrac{\mu_i}{\| \boldsymbol{r} - \boldsymbol{r}_i \|_2^3} (\boldsymbol{r} + F(q_i)\boldsymbol{r}_i)
+-\dfrac{\mu_i}{\| \boldsymbol{r} - \boldsymbol{r}_i \|_2^3} (\boldsymbol{r} + F(q_i)\boldsymbol{r}_i)
 ```
 
 where $F(q_i)$ is given by
@@ -71,9 +76,17 @@ F(q_i) = q_i \left( \dfrac{3 + 3q_i + q_i^2}{1 + (\sqrt{1 + q_i})^3} \right)
 and $q_i$ is 
 
 ```math
-q_i = \dfrac{\boldsymbol{r}^T (\boldsymbol{r} - 2(\boldsymbol{r} - \boldsymbol{r}_i))}{\boldsymbol{r}_i^T \boldsymbol{r}_i}
+q_i = \dfrac{\boldsymbol{r}^T (\boldsymbol{r} - 2\boldsymbol{r}_i)}{\boldsymbol{r}_i^T \boldsymbol{r}_i}
 ```
 
+### Spherical Harmonics
+
+TODO
+
+
+### Solar Radiation Pressure 
+
+TODO
 
 
 ## List of equations of motion in `HFEM.jl`
