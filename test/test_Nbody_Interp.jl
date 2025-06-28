@@ -33,6 +33,8 @@ test_eom_Nbody_Interp = function()
         interpolate_ephem_span=interpolate_ephem_span)
     # @show parameters.DU, parameters.TU, parameters.VU
     # @show parameters.mus
+    # @show parameters.interpolated_ephems
+    # @show parameters.interpolated_transformation
 
     # initial state (in canonical scale)
     u0 = [1.0, 0.0, 0.3, 0.5, 1.0, 0.0]
