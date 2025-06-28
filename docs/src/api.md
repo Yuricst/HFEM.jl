@@ -4,7 +4,7 @@
 
 ```@autodocs
 Modules = [HFEM]
-Order   = [:function, :type]
+Order   = [:function, :type, :struct]
 Pages   = [
   "parameters.jl",
   "ephemeris_interpolation.jl",

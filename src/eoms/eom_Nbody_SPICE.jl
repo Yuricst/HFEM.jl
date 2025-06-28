@@ -1,7 +1,10 @@
 """Equations of motion"""
 
 
-"""Right-hand side of N-body equations of motion compatible with `DifferentialEquations.jl`"""
+"""
+    eom_Nbody_SPICE!(dx, x, params, t)
+
+Right-hand side of N-body equations of motion compatible with `DifferentialEquations.jl`"""
 function eom_Nbody_SPICE!(dx, x, params, t)
     dx[1:3] = x[4:6]
     dx[4:6] = -params.mus[1] / norm(x[1:3])^3 * x[1:3]
@@ -21,7 +24,10 @@ function eom_Nbody_SPICE!(dx, x, params, t)
 end
 
 
-"""Right-hand side of N-body equations of motion with STMcompatible with `DifferentialEquations.jl`"""
+"""
+    eom_stm_Nbody_SPICE!(dx_stm, x_stm, params, t)
+
+Right-hand side of N-body equations of motion with STMcompatible with `DifferentialEquations.jl`"""
 function eom_stm_Nbody_SPICE!(dx_stm, x_stm, params, t)
     dx_stm[1:3] = x_stm[4:6]
     dx_stm[4:6] = -params.mus[1] / norm(x_stm[1:3])^3 * x_stm[1:3]
@@ -44,7 +50,10 @@ function eom_stm_Nbody_SPICE!(dx_stm, x_stm, params, t)
 end
 
 
-"""Evaluate Jacobian of N-body problem"""
+"""
+    dfdx_Nbody_SPICE(x, u, params, t)
+    
+Evaluate Jacobian of N-body problem"""
 function dfdx_Nbody_SPICE(x, u, params, t)
     for i = 2:length(params.mus)
         pos_3body, _ = spkpos(

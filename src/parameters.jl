@@ -31,13 +31,30 @@ function Base.show(io::IO, params::HFEMParameters)
 end
 
 
+"""
+Construct HFEMParameters struct.
+
+# Arguments
+- `et0::Float64`: reference epoch in seconds past J2000
+- `DU::Real`: canonical distance unit
+- `GMs::Vector{Float64}`: gravitational constants of the bodies, in km^3/s^2
+- `naif_ids::Vector{String}`: NAIF IDs of the bodies
+- `naif_frame::String`: inertial frame in which dynamics is integrated
+- `abcorr::String`: aberration correction for querying ephemerides of third bodies
+- `filepath_spherical_harmonics::Union{Nothing,String}`: path to spherical harmonics data file
+- `nmax::Int`: maximum degree of spherical harmonics to be included
+- `frame_PCPF::Union{Nothing,String}`: NAIF frame of planet-centered planet-fixed frame
+- `get_jacobian_func::Bool`: whether to construct symbolic Jacobian function (only for `Nbody` dynamics)
+- `interpolate_ephem_span::Union{Nothing,Vector{Float64}}`: span of epochs to interpolate ephemerides
+- `interpolation_time_step::Real`: time step for interpolation
+"""
 function HFEMParameters(
     et0::Float64,
     DU::Real,
     GMs::Vector{Float64},
     naif_ids::Vector{String},
-    naif_frame::String,
-    abcorr::String;
+    naif_frame::String = "J2000",
+    abcorr::String = "NONE";
     filepath_spherical_harmonics::Union{Nothing,String} = nothing,
     nmax::Int = 4,
     frame_PCPF::Union{Nothing,String} = nothing,

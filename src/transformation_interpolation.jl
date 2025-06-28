@@ -22,6 +22,26 @@ function rotmat3(phi::Float64)
 end
 
 
+"""
+InterpolatedTransformation struct
+
+# Fields
+- `et_range::Tuple{Float64, Float64}`: span of epochs to interpolate
+- `frame_from::String`: frame from which the transformation is computed
+- `frame_to::String`: frame to which the transformation is computed
+- `axis_sequence::Tuple{Int, Int, Int}`: sequence of axes for the Euler angles
+- `splines::Array{Spline1D, 1}`: splines for the interpolated transformation
+- `rescale_epoch::Bool`: whether to rescale the epoch to the canonical time unit
+- `TU::Float64`: canonical time unit
+
+# Arguments
+- `ets::Vector{Float64}`: epochs to interpolate
+- `frame_from::String`: frame from which the transformation is computed
+- `frame_to::String`: frame to which the transformation is computed
+- `rescale_epoch::Bool`: whether to rescale the epoch to the canonical time unit
+- `TU::Float64`: canonical time unit
+- `spline_order::Int`: order of the spline
+"""
 struct InterpolatedTransformation
     et_range::Tuple{Float64, Float64}
     frame_from::String
@@ -37,7 +57,6 @@ struct InterpolatedTransformation
         frame_to::String,
         rescale_epoch::Bool,
         TU::Float64;
-        axis_sequence::Tuple{Int, Int, Int} = (3, 1, 3),
         spline_order::Int = 3,
     )
         @assert 1 <= spline_order <= 5
@@ -48,6 +67,7 @@ struct InterpolatedTransformation
             times_input = ets
         end
         euler_angles = zeros(3, length(ets))
+        axis_sequence = (3, 1, 3)
         for (idx,et) in enumerate(ets)
             T = SPICE.pxform(frame_from, frame_to, et)
             euler_angles[:,idx] .= m2eul(T, axis_sequence...)
@@ -75,6 +95,12 @@ function Base.show(io::IO, transformation::InterpolatedTransformation)
 end
 
 
+"""Interpolate Euler angles at a given epoch
+
+# Arguments
+- `transformation::InterpolatedTransformation`: interpolated transformation struct
+- `et::Float64`: epoch to interpolate
+"""
 function get_euler_angles(transformation::InterpolatedTransformation, et::Float64)
     if transformation.rescale_epoch
         et_eval = et * transformation.TU + transformation.et_range[1]
@@ -90,7 +116,12 @@ function get_euler_angles(transformation::InterpolatedTransformation, et::Float6
 end
 
 
-"""Interpolate transformation matrix at a given epoch"""
+"""Interpolate transformation matrix at a given epoch
+
+# Arguments
+- `transformation::InterpolatedTransformation`: interpolated transformation struct
+- `et::Float64`: epoch to interpolate
+"""
 function pxform(transformation::InterpolatedTransformation, et::Float64)
     euler_angles = get_euler_angles(transformation, et)
     T = rotmat3(euler_angles[1]) * rotmat1(euler_angles[2]) * rotmat3(euler_angles[3])

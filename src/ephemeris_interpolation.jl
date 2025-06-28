@@ -1,6 +1,24 @@
 """Interpolate ephemeris"""
 
 
+"""
+InterpolatedEphemeris struct
+
+# Fields
+- `naif_id::String`: NAIF ID of the body
+- `et_range::Tuple{Float64, Float64}`: span of epochs to interpolate
+- `splines::Array{Spline1D, 1}`: splines for the interpolated ephemeris
+- `rescale_epoch::Bool`: whether to rescale the epoch to the canonical time unit
+- `tstar::Float64`: canonical time unit
+
+# Arguments
+- `naif_id::String`: NAIF ID of the body
+- `ets::Vector{Float64}`: epochs to interpolate
+- `rvs::Array{Float64, 2}`: position and velocity vectors of the body, in km and km/s
+- `rescale_epoch::Bool`: whether to rescale the epoch to the canonical time unit
+- `tstar::Float64`: canonical time unit
+- `spline_order::Int`: order of the spline
+"""
 struct InterpolatedEphemeris
     naif_id::String
     et_range::Tuple{Float64, Float64}
@@ -47,7 +65,13 @@ function Base.show(io::IO, ephem::InterpolatedEphemeris)
 end
 
 
-"""Interpolate ephemeris position at a given epoch"""
+"""
+Interpolate ephemeris position at a given epoch
+
+# Arguments
+- `ephem::InterpolatedEphemeris`: interpolated ephemeris struct
+- `et::Float64`: epoch to interpolate
+"""
 function get_pos(ephem::InterpolatedEphemeris, et::Float64)
     if ephem.rescale_epoch
         et_eval = et * ephem.tstar + ephem.et_range[1]
@@ -62,7 +86,12 @@ function get_pos(ephem::InterpolatedEphemeris, et::Float64)
 end
 
 
-"""Interpolate ephemeris state at a given epoch"""
+"""Interpolate ephemeris state at a given epoch
+
+# Arguments
+- `ephem::InterpolatedEphemeris`: interpolated ephemeris struct
+- `et::Float64`: epoch to interpolate
+"""
 function get_state(ephem::InterpolatedEphemeris, et::Float64)
     if ephem.rescale_epoch
         et_eval = et * ephem.tstar + ephem.et_range[1]

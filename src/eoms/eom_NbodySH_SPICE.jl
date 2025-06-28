@@ -1,7 +1,10 @@
 """Equations of motion for N-body problem with spherical harmonics using SPICE"""
 
 
-"""Right-hand side of N-body equations of motion compatible with `DifferentialEquations.jl`"""
+"""
+    eom_NbodySH_SPICE!(dx, x, params, t)
+    
+Right-hand side of N-body equations of motion compatible with `DifferentialEquations.jl`"""
 function eom_NbodySH_SPICE!(dx, x, params, t)
     dx[1:3] = x[4:6]
     dx[4:6] = -params.mus[1] / norm(x[1:3])^3 * x[1:3]
@@ -33,6 +36,10 @@ function eom_NbodySH_SPICE!(dx, x, params, t)
 end
 
 
+"""
+    eom_NbodySH_SPICE(x, params, t)
+    
+Right-hand side of N-body equations of motion compatible with `DifferentialEquations.jl`"""
 function eom_NbodySH_SPICE(x, params, t)
     dx = [x[4:6]; -params.mus[1] / norm(x[1:3])^3 * x[1:3]]
 
@@ -63,14 +70,20 @@ function eom_NbodySH_SPICE(x, params, t)
 end
 
 
-"""Evaluate Jacobian of N-body problem"""
+"""
+    dfdx_NbodySH_SPICE_fd(x, u, params, t)
+    
+Evaluate Jacobian of N-body problem"""
 function dfdx_NbodySH_SPICE_fd(x, u, params, t)
     return ForwardDiff.jacobian(x -> HFEM.eom_NbodySH_SPICE(x, params, t), x)
 end
 
 
 
-"""Right-hand side of N-body equations of motion with STM compatible with `DifferentialEquations.jl`"""
+"""
+    eom_stm_NbodySH_SPICE_fd!(dx_stm, x_stm, params, t)
+    
+Right-hand side of N-body equations of motion with STM compatible with `DifferentialEquations.jl`"""
 function eom_stm_NbodySH_SPICE_fd!(dx_stm, x_stm, params, t)
     dx_stm[1:6] = eom_NbodySH_SPICE(x_stm[1:6], params, t)
     A = dfdx_NbodySH_SPICE_fd(x_stm[1:6], 0.0, params, t)
