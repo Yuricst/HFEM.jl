@@ -195,11 +195,12 @@ parameters = HFEM.HFEMParameters(
 
 Note:
 
+- NAIF body IDs are defined according to: [https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/req/naif_ids.html](https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/req/naif_ids.html)
 - if using `_SPICE` equations of motion, you do not need to parse `interpolate_ephem_span` and `interpolation_time_step`
 - if using `Nbody` dynamics instead of `NbodySH`, you do not need to parse `filepath_spherical_harmonics`, `nmax`, and `frame_PCPF`
 
 
-## Solving the Initial Value Problem
+## Solving an Initial Value Problem
 
 The integration is done with the `OrdinaryDiffEq.jl` library (or equivalently with `DifferentialEquations.jl`).
 
