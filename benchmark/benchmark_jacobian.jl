@@ -33,7 +33,7 @@ benchmark_jacobian = function(;verbose::Bool = false)
     x0_stm = [x0; reshape(I(6),36)]
 
     # evaluate Jacobian
-    jac_analytical = HFEM.dfdx_Nbody_SPICE(x0, 0.0, parameters, 0.0)
+    jac_analytical = HFEM.dfdx_Nbody_Interp(x0, 0.0, parameters, 0.0)
 
     f_eval = zeros(6)
     HFEM.eom_Nbody_Interp!(f_eval, x0, parameters, 0.0)
@@ -46,11 +46,7 @@ benchmark_jacobian = function(;verbose::Bool = false)
         HFEM.eom_Nbody_Interp!(_f_eval, x0_copy, parameters, 0.0)
         jac_numerical[:,i] = (_f_eval - f_eval) / h
     end
-    
-    eom_x_only = function (x)
-        return HFEM.eom_Nbody_Interp(x, parameters, 0.0)
-    end
-    jac_numerical_fd = ForwardDiff.jacobian(x -> HFEM.eom_Nbody_Interp(x, parameters, 0.0), x0)
+    jac_numerical_fd = HFEM.dfdx_Nbody_Interp_fd(x0, 0.0, parameters, 0.0)
 
     # jacobian via ForwardDiff
     println("Analytical Jacobian:")
@@ -62,13 +58,29 @@ benchmark_jacobian = function(;verbose::Bool = false)
     println("ForwardDiff Jacobian:")
     print_matrix(jac_numerical_fd)
     println()
+    @test jac_analytical ≈ jac_numerical atol=1e-6
+    @test jac_analytical ≈ jac_numerical_fd atol=1e-12
 
-    # benchmark
-    # println("Benchmarking analytical Jacobian:")
-    # @benchmark HFEM.dfdx_Nbody_SPICE($x0, 0.0, $parameters, 0.0)
+    # benchmarks
+    open(joinpath(@__DIR__, "reports/benchmark_Nbody_jacobian.md"), "w+") do f
+        write(f, "# Benchmarking N-body Jacobian\n\n")
+
+        println("Benchmarking analytical Jacobian:")
+        io = IOBuffer()
+        show(io, "text/plain", @benchmark HFEM.dfdx_Nbody_Interp($x0, 0.0, $parameters, 0.0))
+
+        write(f, "\n## N-body Jacobian with analytical method\n\n")
+        write(f, "```julia\n@benchmark HFEM.dfdx_Nbody_Interp($x0, 0.0, $parameters, 0.0)\n```\n")
+        write(f, "```\n"*String(take!(io))*"\n```\n\n")
     
-    println("Benchmarking ForwardDiff Jacobian:")
-    @benchmark ForwardDiff.jacobian(x -> HFEM.eom_Nbody_Interp(x, $parameters, 0.0), $x0)
+        println("Benchmarking ForwardDiff Jacobian:")
+        io = IOBuffer()
+        show(io, "text/plain", @benchmark HFEM.dfdx_Nbody_Interp_fd($x0, 0.0, $parameters, 0.0))
+
+        write(f, "\n## N-body Jacobian with ForwardDiff\n\n")
+        write(f, "```julia\n@benchmark HFEM.dfdx_Nbody_Interp_fd($x0, 0.0, $parameters, 0.0)\n```\n")
+        write(f, "```\n"*String(take!(io))*"\n```\n\n")
+    end
 end
 
 
