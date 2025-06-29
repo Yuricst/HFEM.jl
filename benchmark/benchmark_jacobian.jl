@@ -8,6 +8,9 @@ using SPICE
 using Test
 
 include(joinpath(@__DIR__, "../src/HighFidelityEphemerisModel.jl"))
+include(joinpath(@__DIR__, "../test/utils.jl"))
+
+furnsh_kernels()
 
 
 benchmark_jacobian = function(;verbose::Bool = false)
@@ -46,7 +49,9 @@ benchmark_jacobian = function(;verbose::Bool = false)
         HighFidelityEphemerisModel.eom_Nbody_Interp!(_f_eval, x0_copy, parameters, 0.0)
         jac_numerical[:,i] = (_f_eval - f_eval) / h
     end
-    jac_numerical_fd = HighFidelityEphemerisModel.dfdx_Nbody_Interp_fd(x0, 0.0, parameters, 0.0)
+    jac_numerical_fd = HighFidelityEphemerisModel.eom_jacobian_fd(
+        HighFidelityEphemerisModel.eom_Nbody_Interp, x0, 0.0, parameters, 0.0
+    )
 
     # jacobian via ForwardDiff
     println("Analytical Jacobian:")
@@ -75,10 +80,12 @@ benchmark_jacobian = function(;verbose::Bool = false)
     
         println("Benchmarking ForwardDiff Jacobian:")
         io = IOBuffer()
-        show(io, "text/plain", @benchmark HighFidelityEphemerisModel.dfdx_Nbody_Interp_fd($x0, 0.0, $parameters, 0.0))
+        show(io, "text/plain", @benchmark HighFidelityEphemerisModel.eom_jacobian_fd(
+            HighFidelityEphemerisModel.eom_Nbody_Interp, $x0, 0.0, $parameters, 0.0
+        ))
 
         write(f, "\n## N-body Jacobian with ForwardDiff\n\n")
-        write(f, "```julia\n@benchmark HighFidelityEphemerisModel.dfdx_Nbody_Interp_fd($x0, 0.0, $parameters, 0.0)\n```\n")
+        write(f, "```julia\n@benchmark HighFidelityEphemerisModel.eom_jacobian_fd(HighFidelityEphemerisModel.eom_Nbody_Interp, $x0, 0.0, $parameters, 0.0)\n```\n")
         write(f, "```\n"*String(take!(io))*"\n```\n\n")
     end
 end
