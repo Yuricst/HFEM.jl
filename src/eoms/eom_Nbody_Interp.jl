@@ -68,23 +68,13 @@ end
 
 
 """
-    dfdx_Nbody_Interp_fd(x, u, params, t)
-    
-Evaluate Jacobian of N-body problem
-"""
-function dfdx_Nbody_Interp_fd(x, u, params, t)
-    return ForwardDiff.jacobian(x -> eom_Nbody_Interp(x, params, t), x)
-end
-
-
-"""
     eom_stm_Nbody_Interp_fd!(dx_stm, x_stm, params, t)
     
 Right-hand side of N-body equations of motion with STM compatible with `DifferentialEquations.jl`
 """
 function eom_stm_Nbody_Interp_fd!(dx_stm, x_stm, params, t)
     dx_stm[1:6] = eom_Nbody_Interp(x_stm[1:6], params, t)
-    A = dfdx_Nbody_Interp_fd(x_stm[1:6], 0.0, params, t)
+    A = eom_jacobian_fd(eom_Nbody_Interp, x_stm[1:6], 0.0, params, t)
     A[1:3,4:6] .= I(3)   # force identity for linear map
     dx_stm[7:42] = reshape((A * reshape(x_stm[7:42],6,6)')', 36)
     return nothing

@@ -8,9 +8,9 @@ using OrdinaryDiffEq
 using SPICE
 using Test
 
-#if !@isdefined(HighFidelityEphemerisModel)
+if !@isdefined(HighFidelityEphemerisModel)
     include(joinpath(@__DIR__, "../src/HighFidelityEphemerisModel.jl"))
-#end
+end
 
 
 test_eom_Nbody_SPICE = function()
