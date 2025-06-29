@@ -81,6 +81,7 @@ function eom_stm_Nbody_Interp!(dx_stm, x_stm, params, t)
             dx_stm[4:6] += srp_cannonball(x_stm[1:3], pos_3body, params.k_srp_cannonball)
         end
     end
+
     if params.include_srp
         A = params.f_jacobian(x_stm[1:6], params.mus, params.Rs, params.k_srp_cannonball, params.R_sun)
     else
@@ -110,6 +111,7 @@ function dfdx_Nbody_Interp(x, u, params, t)
             params.R_sun = pos_3body
         end
     end
+    
     if params.include_srp
         return params.f_jacobian(x[1:6], params.mus, params.Rs, params.k_srp_cannonball, params.R_sun)
     else
