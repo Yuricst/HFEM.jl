@@ -3,7 +3,7 @@
 ## Parameters & Interpolations
 
 ```@autodocs
-Modules = [HFEM]
+Modules = [HighFidelityEphemerisModel]
 Order   = [:function, :type, :struct]
 Pages   = [
   "parameters.jl",
@@ -15,7 +15,7 @@ Pages   = [
 ## Equations of motion
 
 ```@autodocs
-Modules = [HFEM]
+Modules = [HighFidelityEphemerisModel]
 Order   = [:function, :type]
 Pages   = [
   "eoms/eom_Nbody_Interp.jl",
@@ -28,7 +28,7 @@ Pages   = [
 ## Perturbations
 
 ```@autodocs
-Modules = [HFEM]
+Modules = [HighFidelityEphemerisModel]
 Order   = [:function, :type]
 Pages   = [
   "perturbations/spherical_harmonics.jl",
@@ -39,7 +39,7 @@ Pages   = [
 ## Events
 
 ```@autodocs
-Modules = [HFEM]
+Modules = [HighFidelityEphemerisModel]
 Order   = [:function, :type]
 Pages   = [
   "events.jl",

@@ -8,8 +8,8 @@ using OrdinaryDiffEq
 using SPICE
 using Test
 
-if !@isdefined(HFEM)
-    include(joinpath(@__DIR__, "../src/HFEM.jl"))
+if !@isdefined(HighFidelityEphemerisModel)
+    include(joinpath(@__DIR__, "../src/HighFidelityEphemerisModel.jl"))
 end
 
 
@@ -28,7 +28,7 @@ test_callback_trueanomaly = function()
     et0 = str2et("2026-01-05T00:00:00")
     etf = et0 + 30 * 86400.0
     interpolate_ephem_span = [et0, etf]
-    parameters = HFEM.HFEMParameters(
+    parameters = HighFidelityEphemerisModel.HighFidelityEphemerisModelParameters(
         et0, DU, GMs, naif_ids, naif_frame, abcorr;
         interpolate_ephem_span=interpolate_ephem_span)
 
@@ -40,7 +40,7 @@ test_callback_trueanomaly = function()
     tspan = (0.0, 12*86400/parameters.TU)
 
     # solve without callback
-    prob = ODEProblem(HFEM.eom_Nbody_Interp!, x0, tspan, parameters)
+    prob = ODEProblem(HighFidelityEphemerisModel.eom_Nbody_Interp!, x0, tspan, parameters)
     sol = solve(prob, Vern7(), reltol=1e-12, abstol=1e-12)
 
     # # plot
@@ -54,12 +54,12 @@ test_callback_trueanomaly = function()
         # solve with callback
         time_bounds = (3*86400/parameters.TU, tspan[end])
         radius_bounds = (0.0, 1e6/parameters.DU)
-        detect_trueanomaly = HFEM.get_trueanomaly_event(θ_target; t_bounds=time_bounds, radius_bounds=radius_bounds)#, parameters.mus[1])
+        detect_trueanomaly = HighFidelityEphemerisModel.get_trueanomaly_event(θ_target; t_bounds=time_bounds, radius_bounds=radius_bounds)#, parameters.mus[1])
         affect!(integrator) = terminate!(integrator)
         cb = ContinuousCallback(detect_trueanomaly, affect!)
         sol_cb = solve(prob, Tsit5(), callback = cb, reltol=1e-12, abstol=1e-12)
-        @test HFEM.angle_difference(HFEM.cart2trueanomaly(sol_cb.u[end][1:6], parameters.mus[1]), θ_target) < 1e-12
-        #@show HFEM.angle_difference(HFEM.cart2trueanomaly(sol_cb.u[end][1:6], parameters.mus[1]), θ_target)
+        @test HighFidelityEphemerisModel.angle_difference(HighFidelityEphemerisModel.cart2trueanomaly(sol_cb.u[end][1:6], parameters.mus[1]), θ_target) < 1e-12
+        #@show HighFidelityEphemerisModel.angle_difference(HighFidelityEphemerisModel.cart2trueanomaly(sol_cb.u[end][1:6], parameters.mus[1]), θ_target)
 
         # # append to plot
         # scatter!(ax3d, [sol_cb.u[end][1]], [sol_cb.u[end][2]], [sol_cb.u[end][3]], color=:red, marker=:cross, markersize=10)

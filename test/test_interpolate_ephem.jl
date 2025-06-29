@@ -3,8 +3,8 @@
 using LinearAlgebra
 using SPICE
 
-#if !@isdefined(HFEM)
-    include(joinpath(@__DIR__, "../src/HFEM.jl"))
+#if !@isdefined(HighFidelityEphemerisModel)
+    include(joinpath(@__DIR__, "../src/HighFidelityEphemerisModel.jl"))
 #end
 
 
@@ -17,13 +17,13 @@ test_interpolate_ephem = function ()
     DU = 3000.0
 
     et0 = str2et("2020-01-01T00:00:00")
-    parameters = HFEM.HFEMParameters(et0, DU, GMs, naif_ids, naif_frame, abcorr)
+    parameters = HighFidelityEphemerisModel.HighFidelityEphemerisModelParameters(et0, DU, GMs, naif_ids, naif_frame, abcorr)
 
     # query states to be interpolated
     ets = range(et0, et0 + 30 * 86400.0, 1000)
     rvs = hcat([spkezr(naif_ids[2], et, naif_frame, abcorr, naif_ids[1])[1] for et in ets]...)
 
-    ephem_interp = HFEM.InterpolatedEphemeris(
+    ephem_interp = HighFidelityEphemerisModel.InterpolatedEphemeris(
         naif_ids[2], 
         ets,
         rvs,
@@ -38,7 +38,7 @@ test_interpolate_ephem = function ()
     state_spice = zeros(6, length(ets_test))
     diff = zeros(6, length(ets_test))
     for (idx,et_test) in enumerate(ets_test)
-        state_interp[:,idx] = HFEM.get_state(ephem_interp, et_test)
+        state_interp[:,idx] = HighFidelityEphemerisModel.get_state(ephem_interp, et_test)
 
         state_spice[:,idx], _ = spkezr(
             naif_ids[2],

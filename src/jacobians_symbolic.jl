@@ -1,4 +1,4 @@
-"""Symbolic Jacobians for HFEM"""
+"""Symbolic Jacobians for HighFidelityEphemerisModel"""
 
 
 function symbolic_Nbody_jacobian(N::Int)

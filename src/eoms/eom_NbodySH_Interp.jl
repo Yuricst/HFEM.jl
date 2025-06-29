@@ -10,7 +10,7 @@ function eom_NbodySH_Interp!(dx, x, params, t)
     dx[4:6] = -params.mus[1] / norm(x[1:3])^3 * x[1:3]
 
     for i = 2:length(params.mus)
-        pos_3body = HFEM.get_pos(params.interpolated_ephems[i-1], params.et0 + t*params.TU) /params.DU
+        pos_3body = HighFidelityEphemerisModel.get_pos(params.interpolated_ephems[i-1], params.et0 + t*params.TU) /params.DU
         dx[4:6] += third_body_accel(x[1:3], pos_3body, params.mus[i])
     end
 
@@ -40,7 +40,7 @@ function eom_NbodySH_Interp(x, params, t)
     dx = [x[4:6]; -params.mus[1] / norm(x[1:3])^3 * x[1:3]]
 
     for i = 2:length(params.mus)
-        pos_3body = HFEM.get_pos(params.interpolated_ephems[i-1], params.et0 + t*params.TU) /params.DU
+        pos_3body = HighFidelityEphemerisModel.get_pos(params.interpolated_ephems[i-1], params.et0 + t*params.TU) /params.DU
         dx[4:6] += third_body_accel(x[1:3], pos_3body, params.mus[i])
     end
 
@@ -66,7 +66,7 @@ end
     
 Evaluate Jacobian of N-body problem"""
 function dfdx_NbodySH_Interp_fd(x, u, params, t)
-    return ForwardDiff.jacobian(x -> HFEM.eom_NbodySH_Interp(x, params, t), x)
+    return ForwardDiff.jacobian(x -> HighFidelityEphemerisModel.eom_NbodySH_Interp(x, params, t), x)
 end
 
 

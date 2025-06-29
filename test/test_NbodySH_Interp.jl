@@ -7,8 +7,8 @@ using OrdinaryDiffEq
 using SPICE
 using Test
 
-if !@isdefined(HFEM)
-    include(joinpath(@__DIR__, "../src/HFEM.jl"))
+if !@isdefined(HighFidelityEphemerisModel)
+    include(joinpath(@__DIR__, "../src/HighFidelityEphemerisModel.jl"))
 end
 
 
@@ -18,7 +18,7 @@ test_eom_NbodySH_SPICE = function()
     denormalize = true
 
     filepath_spherical_harmonics = joinpath(@__DIR__, "../data/luna/gggrx_1200l_sha_20x20.tab")
-    #spherical_harmonics_data = HFEM.load_spherical_harmonics(filepath, nmax, denormalize)
+    #spherical_harmonics_data = HighFidelityEphemerisModel.load_spherical_harmonics(filepath, nmax, denormalize)
 
     # define parameters
     GMs = [
@@ -35,7 +35,7 @@ test_eom_NbodySH_SPICE = function()
     etf = et0 + 30 * 86400.0
     interpolate_ephem_span = [et0, etf]
     interpolation_time_step = 30.0
-    parameters = HFEM.HFEMParameters(
+    parameters = HighFidelityEphemerisModel.HighFidelityEphemerisModelParameters(
         et0, DU, GMs, naif_ids, naif_frame, abcorr;
         interpolate_ephem_span=interpolate_ephem_span,
         filepath_spherical_harmonics = filepath_spherical_harmonics,
@@ -55,11 +55,11 @@ test_eom_NbodySH_SPICE = function()
     tspan = (0.0, 6 * 3600/parameters.TU)  #3*86400/parameters.TU)
 
     # solve with SPICE
-    prob_spice = ODEProblem(HFEM.eom_NbodySH_SPICE!, u0, tspan, parameters)
+    prob_spice = ODEProblem(HighFidelityEphemerisModel.eom_NbodySH_SPICE!, u0, tspan, parameters)
     sol_spice = solve(prob_spice, Vern8(), reltol=1e-14, abstol=1e-14)
 
     # solve
-    prob_interp = ODEProblem(HFEM.eom_NbodySH_Interp!, u0, tspan, parameters)
+    prob_interp = ODEProblem(HighFidelityEphemerisModel.eom_NbodySH_Interp!, u0, tspan, parameters)
     sol_interp = solve(prob_interp, Vern8(), reltol=1e-14, abstol=1e-14)
 
     # @show sol_spice.u[end]
@@ -82,7 +82,7 @@ function test_eom_stm_NbodySH_Interp(;verbose=false)
     denormalize = true
 
     filepath_spherical_harmonics = joinpath(@__DIR__, "../data/luna/gggrx_1200l_sha_20x20.tab")
-    #spherical_harmonics_data = HFEM.load_spherical_harmonics(filepath, nmax, denormalize)
+    #spherical_harmonics_data = HighFidelityEphemerisModel.load_spherical_harmonics(filepath, nmax, denormalize)
 
     # define parameters
     naif_ids = ["301", "399", "10"]
@@ -95,7 +95,7 @@ function test_eom_stm_NbodySH_Interp(;verbose=false)
     etf = et0 + 30 * 86400.0
     interpolate_ephem_span = [et0, etf]
     interpolation_time_step = 1000.0
-    parameters = HFEM.HFEMParameters(
+    parameters = HighFidelityEphemerisModel.HighFidelityEphemerisModelParameters(
         et0, DU, GMs, naif_ids, naif_frame, abcorr;
         interpolate_ephem_span=interpolate_ephem_span,
         filepath_spherical_harmonics = filepath_spherical_harmonics,
@@ -111,17 +111,17 @@ function test_eom_stm_NbodySH_Interp(;verbose=false)
 
     # evaluate Jacobian
     f_eval = zeros(6)
-    HFEM.eom_NbodySH_Interp!(f_eval, x0, parameters, 0.0)
+    HighFidelityEphemerisModel.eom_NbodySH_Interp!(f_eval, x0, parameters, 0.0)
     jac_numerical = zeros(6,6)
     h = 1e-8
     for i = 1:6
         x0_copy = copy(x0)
         x0_copy[i] += h
         _f_eval = zeros(6)
-        HFEM.eom_NbodySH_Interp!(_f_eval, x0_copy, parameters, 0.0)
+        HighFidelityEphemerisModel.eom_NbodySH_Interp!(_f_eval, x0_copy, parameters, 0.0)
         jac_numerical[:,i] = (_f_eval - f_eval) / h
     end
-    jac_numerical_fd = HFEM.dfdx_NbodySH_Interp_fd(x0, 0.0, parameters, 0.0)
+    jac_numerical_fd = HighFidelityEphemerisModel.dfdx_NbodySH_Interp_fd(x0, 0.0, parameters, 0.0)
 
     if verbose
         println("Numerical Jacobian:")
@@ -140,12 +140,12 @@ function test_eom_stm_NbodySH_Interp(;verbose=false)
     tspan = (0.0, 7*86400/parameters.TU)
 
     # solve just the state
-    prob = ODEProblem(HFEM.eom_NbodySH_Interp!, x0, tspan, parameters)
+    prob = ODEProblem(HighFidelityEphemerisModel.eom_NbodySH_Interp!, x0, tspan, parameters)
     sol = solve(prob, Vern8(), reltol=1e-14, abstol=1e-14)
     @test sol.retcode == SciMLBase.ReturnCode.Success
 
     # solve with ForwardDiff Jacobian
-    prob_fd = ODEProblem(HFEM.eom_stm_NbodySH_Interp_fd!, x0_stm, tspan, parameters)
+    prob_fd = ODEProblem(HighFidelityEphemerisModel.eom_stm_NbodySH_Interp_fd!, x0_stm, tspan, parameters)
     sol_fd = solve(prob_fd, Vern8(), reltol=1e-14, abstol=1e-14)
     @test sol_fd.retcode == SciMLBase.ReturnCode.Success
 
@@ -166,11 +166,11 @@ function test_eom_stm_NbodySH_Interp(;verbose=false)
     for i = 1:6
         x0_plus = copy(x0)
         x0_plus[i] += h
-        sol_ptrb = solve(ODEProblem(HFEM.eom_NbodySH_Interp!, x0_plus, tspan, parameters), Vern8(), reltol=1e-14, abstol=1e-14)
+        sol_ptrb = solve(ODEProblem(HighFidelityEphemerisModel.eom_NbodySH_Interp!, x0_plus, tspan, parameters), Vern8(), reltol=1e-14, abstol=1e-14)
 
         x0_min = copy(x0)
         x0_min[i] -= h
-        sol_ptrb_min = solve(ODEProblem(HFEM.eom_NbodySH_Interp!, x0_min, tspan, parameters), Vern8(), reltol=1e-14, abstol=1e-14)
+        sol_ptrb_min = solve(ODEProblem(HighFidelityEphemerisModel.eom_NbodySH_Interp!, x0_min, tspan, parameters), Vern8(), reltol=1e-14, abstol=1e-14)
 
         STM_numerical[:,i] = (sol_ptrb.u[end][1:6] - sol_ptrb_min.u[end][1:6]) / (2*h)
     end

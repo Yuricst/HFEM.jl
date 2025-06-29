@@ -1,4 +1,4 @@
-name = "HFEM"
+name = "HighFidelityEphemerisModel"
 uuid = "2c790280-9c90-4c3f-8fb8-a66dc063821a"
 authors = ["@yuricst"]
 version = "0.1.0"

@@ -4,15 +4,15 @@ Make documentation with Documenter.jl
 
 using Documenter
 
-include(joinpath(dirname(@__FILE__), "../src/HFEM.jl"))
+include(joinpath(dirname(@__FILE__), "../src/HighFidelityEphemerisModel.jl"))
 
 
 makedocs(
     clean = false,
     build = dirname(@__FILE__),
-	modules  = [HFEM],
+	modules  = [HighFidelityEphemerisModel],
     format   = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true"),
-    sitename = "HFEM.jl",
+    sitename = "HighFidelityEphemerisModel.jl",
     # options
     pages = [
 		"Home" => "index.md",

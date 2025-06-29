@@ -1,21 +1,21 @@
 <p align="center">
-  <img src="docs/assets/logo.png" alt="HFEM.jl Logo" width="75%"/>
+  <img src="docs/assets/logo.png" alt="HighFidelityEphemerisModel.jl Logo" width="75%"/>
 </p>
 
 
 <p align="center">
-  <img src="https://github.com/Yuricst/HFEM.jl/actions/workflows/runtest.yml/badge.svg" alt="test workflow"/>
-  <a href="https://yuricst.github.io/HFEM.jl/">📚Read the docs📚</a>
+  <img src="https://github.com/Yuricst/HighFidelityEphemerisModel.jl/actions/workflows/runtest.yml/badge.svg" alt="test workflow"/>
+  <a href="https://yuricst.github.io/HighFidelityEphemerisModel.jl/">📚Read the docs📚</a>
 </p>
 
-`HFEM.jl` is a minimal implementation of high-fidelity ephemeris model dynamics compatible with the [`OrdinaryDiffEq.jl`](https://github.com/SciML/OrdinaryDiffEq.jl) ecosystem (i.e. its solvers, parallelism, etc.).
+`HighFidelityEphemerisModel.jl` is a minimal implementation of high-fidelity ephemeris model dynamics compatible with the [`OrdinaryDiffEq.jl`](https://github.com/SciML/OrdinaryDiffEq.jl) ecosystem (i.e. its solvers, parallelism, etc.).
 
-What `HFEM.jl` contains:
+What `HighFidelityEphemerisModel.jl` contains:
 - full-ephemeris equations of motion relevant for astrodynamics
 - callback conditions for common astrodynamics events (e.g. detection of osculating true anomaly)
 - ephemeris interpolation, to define equations of motion compatible with `EnsembleThreads` & automatic differentiation, e.g. `ForwardDiff`
 
-What `HFEM.jl` is *not*:
+What `HighFidelityEphemerisModel.jl` is *not*:
 - not an integrator, i.e. there are no integration schemes (e.g. Runge-Kutta algorithms, step-correction, event detection features, etc.) impemented (at least for now)
 
 We strive for minimal dependencies (listed in `Project.toml`), consisting of: `Dierckx`, `ForwardDiff`, `LinearAlgebra`, `OrdinaryDiffEq`, `SPICE`, `Symbolics`.
@@ -27,24 +27,24 @@ We strive for minimal dependencies (listed in `Project.toml`), consisting of: `D
 2. In your project directory, add:
 
 ```julia-repl
-pkg> dev ./path/to/HFEM.jl
+pkg> dev ./path/to/HighFidelityEphemerisModel.jl
 ```
 
 3. To run tests, `cd` to the root of this repository, then
 
 ```julia-repl
 (@v1.10) pkg> activate .
-(HFEM) pkg> test
+(HighFidelityEphemerisModel) pkg> test
 ```
 
 ## Examples
 
-For further details, see the [docs](https://yuricst.github.io/HFEM.jl/).
+For further details, see the [docs](https://yuricst.github.io/HighFidelityEphemerisModel.jl/).
 
 ### N-body Dynamics
 
 ```julia
-using HFEM
+using HighFidelityEphemerisModel
 using OrdinaryDiffEq
 using SPICE
 
@@ -63,14 +63,14 @@ abcorr = "NONE"
 DU = 1e5                               # canonical distance unit, in km
 
 nmax = 4                               # using up to 4-by-4 spherical harmonics
-filepath_spherical_harmonics = "HFEM.jl/data/luna/gggrx_1200l_sha_20x20.tab"
+filepath_spherical_harmonics = "HighFidelityEphemerisModel.jl/data/luna/gggrx_1200l_sha_20x20.tab"
 
 et0 = str2et("2026-01-05T00:00:00")    # reference epoch
 etf = et0 + 30 * 86400.0
 interpolate_ephem_span = [et0, etf]    # range of epoch to interpolate ephemeris
 interpolation_time_step = 1000.0       # time-step to sample ephemeris for interpolation
 
-parameters = HFEM.HFEMParameters(
+parameters = HighFidelityEphemerisModel.HighFidelityEphemerisModelParameters(
     et0, DU, GMs, naif_ids, naif_frame, abcorr;
     interpolate_ephem_span=interpolate_ephem_span,
     interpolation_time_step = interpolation_time_step,
@@ -82,11 +82,11 @@ parameters = HFEM.HFEMParameters(
 # construct & solve ODE problem
 x0 = [1.0, 0.0, 0.3, 0.5, 1.0, 0.0]         # initial state in DU & DU/TU
 tspan = (0.0, 7*86400/parameters.TU)
-prob = ODEProblem(HFEM.eom_NbodySH_SPICE!, x0, tspan, parameters)              # or HFEM.eom_NbodySH_Interp!
+prob = ODEProblem(HighFidelityEphemerisModel.eom_NbodySH_SPICE!, x0, tspan, parameters)              # or HighFidelityEphemerisModel.eom_NbodySH_Interp!
 sol = solve(prob, Vern8(), reltol=1e-14, abstol=1e-14)
 
 # propagate both state & STM
 x0_stm = [x0; reshape(I(6),36)]
-prob = ODEProblem(HFEM.eom_stm_NbodySH_SPICE_fd!, x0_stm, tspan, parameters)   # or HFEM.eom_stm_NbodySH_Interp_fd!
+prob = ODEProblem(HighFidelityEphemerisModel.eom_stm_NbodySH_SPICE_fd!, x0_stm, tspan, parameters)   # or HighFidelityEphemerisModel.eom_stm_NbodySH_Interp_fd!
 sol = solve(prob, Vern8(), reltol=1e-14, abstol=1e-14)
 ```

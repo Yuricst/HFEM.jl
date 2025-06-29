@@ -1,6 +1,6 @@
 # Overview
 
-There are a number of equations of motion implemented in `HFEM.jl`.
+There are a number of equations of motion implemented in `HighFidelityEphemerisModel.jl`.
 
 - functions starting with `eom_` integrates the translational state (`[x,y,z,vx,vy,vz]`)
 - functions starting with `eom_stm_` integrates both the translational state and the flattened 6-by-6 STM.
@@ -17,7 +17,7 @@ There are a number of equations of motion implemented in `HFEM.jl`.
 
 ## Dynamics model
 
-In `HFEM.jl`, the dynamcis consists of the central gravitational term, together with the following perturbations:
+In `HighFidelityEphemerisModel.jl`, the dynamcis consists of the central gravitational term, together with the following perturbations:
 
 - third-body perturbations
 - spherical harmonics
@@ -136,7 +136,7 @@ W_{n m}=\left(\frac{R_{\oplus}}{r}\right)^{n+1} \cdot P_{n m}(\sin \phi) \cdot \
 TODO
 
 
-## List of equations of motion in `HFEM.jl`
+## List of equations of motion in `HighFidelityEphemerisModel.jl`
 
 The table below summarizes the equations of motion. Note: 
 
@@ -169,7 +169,7 @@ Below is the most general example compatible with `eom_NbodySH_Interp!`/`eom_stm
 
 ```julia
 using OrdinaryDiffEq
-using HFEM
+using HighFidelityEphemerisModel
 
 # load SPICE kernels
 spice_dir = ENV["SPICE"]
@@ -186,14 +186,14 @@ abcorr = "NONE"
 DU = 1e5                               # canonical distance unit, in km
 
 nmax = 4                               # using up to 4-by-4 spherical harmonics
-filepath_spherical_harmonics = "HFEM.jl/data/luna/gggrx_1200l_sha_20x20.tab"
+filepath_spherical_harmonics = "HighFidelityEphemerisModel.jl/data/luna/gggrx_1200l_sha_20x20.tab"
 
 et0 = str2et("2026-01-05T00:00:00")    # reference epoch
 etf = et0 + 30 * 86400.0
 interpolate_ephem_span = [et0, etf]    # range of epoch to interpolate ephemeris
 interpolation_time_step = 1000.0       # time-step to sample ephemeris for interpolation
 
-parameters = HFEM.HFEMParameters(
+parameters = HighFidelityEphemerisModel.HighFidelityEphemerisModelParameters(
     et0, DU, GMs, naif_ids, naif_frame, abcorr;
     interpolate_ephem_span=interpolate_ephem_span,
     interpolation_time_step = interpolation_time_step,
@@ -222,10 +222,10 @@ x0 = [1.05, 0.0, 0.3, 0.5, 1.0, 0.0]
 tspan = (0.0, 6 * 3600/parameters.TU)
 
 # solve with SPICE
-prob_spice = ODEProblem(HFEM.eom_NbodySH_SPICE!, x0, tspan, parameters)
+prob_spice = ODEProblem(HighFidelityEphemerisModel.eom_NbodySH_SPICE!, x0, tspan, parameters)
 sol_spice = solve(prob_spice, Vern8(), reltol=1e-14, abstol=1e-14)
 
 # solve with interpolation
-prob_interp = ODEProblem(HFEM.eom_NbodySH_Interp!, x0, tspan, parameters)
+prob_interp = ODEProblem(HighFidelityEphemerisModel.eom_NbodySH_Interp!, x0, tspan, parameters)
 sol_interp = solve(prob_interp, Vern8(), reltol=1e-14, abstol=1e-14)
 ```

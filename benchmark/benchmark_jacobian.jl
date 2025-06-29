@@ -7,7 +7,7 @@ using OrdinaryDiffEq
 using SPICE
 using Test
 
-include(joinpath(@__DIR__, "../src/HFEM.jl"))
+include(joinpath(@__DIR__, "../src/HighFidelityEphemerisModel.jl"))
 
 
 benchmark_jacobian = function(;verbose::Bool = false)
@@ -25,7 +25,7 @@ benchmark_jacobian = function(;verbose::Bool = false)
     et0 = str2et("2020-01-01T00:00:00")
     etf = et0 + 30 * 86400.0
     interpolate_ephem_span = [et0, etf]
-    parameters = HFEM.HFEMParameters(et0, DU, GMs, naif_ids, naif_frame, abcorr;
+    parameters = HighFidelityEphemerisModel.HighFidelityEphemerisModelParameters(et0, DU, GMs, naif_ids, naif_frame, abcorr;
         interpolate_ephem_span=interpolate_ephem_span)
 
     # initial state (in canonical scale)
@@ -33,20 +33,20 @@ benchmark_jacobian = function(;verbose::Bool = false)
     x0_stm = [x0; reshape(I(6),36)]
 
     # evaluate Jacobian
-    jac_analytical = HFEM.dfdx_Nbody_Interp(x0, 0.0, parameters, 0.0)
+    jac_analytical = HighFidelityEphemerisModel.dfdx_Nbody_Interp(x0, 0.0, parameters, 0.0)
 
     f_eval = zeros(6)
-    HFEM.eom_Nbody_Interp!(f_eval, x0, parameters, 0.0)
+    HighFidelityEphemerisModel.eom_Nbody_Interp!(f_eval, x0, parameters, 0.0)
     jac_numerical = zeros(6,6)
     h = 1e-8
     for i = 1:6
         x0_copy = copy(x0)
         x0_copy[i] += h
         _f_eval = zeros(6)
-        HFEM.eom_Nbody_Interp!(_f_eval, x0_copy, parameters, 0.0)
+        HighFidelityEphemerisModel.eom_Nbody_Interp!(_f_eval, x0_copy, parameters, 0.0)
         jac_numerical[:,i] = (_f_eval - f_eval) / h
     end
-    jac_numerical_fd = HFEM.dfdx_Nbody_Interp_fd(x0, 0.0, parameters, 0.0)
+    jac_numerical_fd = HighFidelityEphemerisModel.dfdx_Nbody_Interp_fd(x0, 0.0, parameters, 0.0)
 
     # jacobian via ForwardDiff
     println("Analytical Jacobian:")
@@ -67,18 +67,18 @@ benchmark_jacobian = function(;verbose::Bool = false)
 
         println("Benchmarking analytical Jacobian:")
         io = IOBuffer()
-        show(io, "text/plain", @benchmark HFEM.dfdx_Nbody_Interp($x0, 0.0, $parameters, 0.0))
+        show(io, "text/plain", @benchmark HighFidelityEphemerisModel.dfdx_Nbody_Interp($x0, 0.0, $parameters, 0.0))
 
         write(f, "\n## N-body Jacobian with analytical method\n\n")
-        write(f, "```julia\n@benchmark HFEM.dfdx_Nbody_Interp($x0, 0.0, $parameters, 0.0)\n```\n")
+        write(f, "```julia\n@benchmark HighFidelityEphemerisModel.dfdx_Nbody_Interp($x0, 0.0, $parameters, 0.0)\n```\n")
         write(f, "```\n"*String(take!(io))*"\n```\n\n")
     
         println("Benchmarking ForwardDiff Jacobian:")
         io = IOBuffer()
-        show(io, "text/plain", @benchmark HFEM.dfdx_Nbody_Interp_fd($x0, 0.0, $parameters, 0.0))
+        show(io, "text/plain", @benchmark HighFidelityEphemerisModel.dfdx_Nbody_Interp_fd($x0, 0.0, $parameters, 0.0))
 
         write(f, "\n## N-body Jacobian with ForwardDiff\n\n")
-        write(f, "```julia\n@benchmark HFEM.dfdx_Nbody_Interp_fd($x0, 0.0, $parameters, 0.0)\n```\n")
+        write(f, "```julia\n@benchmark HighFidelityEphemerisModel.dfdx_Nbody_Interp_fd($x0, 0.0, $parameters, 0.0)\n```\n")
         write(f, "```\n"*String(take!(io))*"\n```\n\n")
     end
 end

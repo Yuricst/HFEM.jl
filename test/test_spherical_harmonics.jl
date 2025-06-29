@@ -7,8 +7,8 @@ using OrdinaryDiffEq
 using SPICE
 using Test
 
-if !@isdefined(HFEM)
-    include(joinpath(@__DIR__, "../src/HFEM.jl"))
+if !@isdefined(HighFidelityEphemerisModel)
+    include(joinpath(@__DIR__, "../src/HighFidelityEphemerisModel.jl"))
 end
 
 function test_spherical_harmonics()
@@ -17,13 +17,13 @@ function test_spherical_harmonics()
     denormalize = true
 
     filepath = joinpath(@__DIR__, "../data/luna/gggrx_1200l_sha_20x20.tab")
-    spherical_harmonics_data = HFEM.load_spherical_harmonics(filepath, nmax, denormalize)
+    spherical_harmonics_data = HighFidelityEphemerisModel.load_spherical_harmonics(filepath, nmax, denormalize)
 
     rvec = [0.0, 0.0, 1838.0]
-    lmb, phi, r = HFEM.cart2sph(rvec)
+    lmb, phi, r = HighFidelityEphemerisModel.cart2sph(rvec)
 
     # evaluate a single acceleration term in the infinite series
-    a_nm = HFEM.spherical_harmonics_nm_accel_PCPF(
+    a_nm = HighFidelityEphemerisModel.spherical_harmonics_nm_accel_PCPF(
         phi, lmb, r,
         spherical_harmonics_data["Cnm"],
         spherical_harmonics_data["Snm"],
@@ -33,7 +33,7 @@ function test_spherical_harmonics()
     )
 
     # evaluate the cumulative acceleration due to spherical harmonics
-    a_full = HFEM.spherical_harmonics_accel_PCPF(
+    a_full = HighFidelityEphemerisModel.spherical_harmonics_accel_PCPF(
         rvec,
         spherical_harmonics_data["Cnm"],
         spherical_harmonics_data["Snm"],

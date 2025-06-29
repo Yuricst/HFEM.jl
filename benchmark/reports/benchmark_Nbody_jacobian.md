@@ -4,7 +4,7 @@
 ## N-body Jacobian with analytical method
 
 ```julia
-@benchmark HFEM.dfdx_Nbody_Interp([1.0, 0.0, 0.3, 0.5, 1.0, 0.0], 0.0, , 0.0)
+@benchmark HighFidelityEphemerisModel.dfdx_Nbody_Interp([1.0, 0.0, 0.3, 0.5, 1.0, 0.0], 0.0, , 0.0)
 ```
 ```
 BenchmarkTools.Trial: 10000 samples with 4 evaluations.
@@ -23,7 +23,7 @@ BenchmarkTools.Trial: 10000 samples with 4 evaluations.
 ## N-body Jacobian with ForwardDiff
 
 ```julia
-@benchmark HFEM.dfdx_Nbody_Interp_fd([1.0, 0.0, 0.3, 0.5, 1.0, 0.0], 0.0, , 0.0)
+@benchmark HighFidelityEphemerisModel.dfdx_Nbody_Interp_fd([1.0, 0.0, 0.3, 0.5, 1.0, 0.0], 0.0, , 0.0)
 ```
 ```
 BenchmarkTools.Trial: 10000 samples with 9 evaluations.

@@ -4,7 +4,7 @@ using SPICE
 using Test
 
 include("utils.jl")
-include(joinpath(@__DIR__, "../src/HFEM.jl"))
+include(joinpath(@__DIR__, "../src/HighFidelityEphemerisModel.jl"))
 
 # furnish spice kernels
 furnsh_kernels()

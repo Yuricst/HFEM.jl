@@ -75,7 +75,7 @@ end
     
 Evaluate Jacobian of N-body problem"""
 function dfdx_NbodySH_SPICE_fd(x, u, params, t)
-    return ForwardDiff.jacobian(x -> HFEM.eom_NbodySH_SPICE(x, params, t), x)
+    return ForwardDiff.jacobian(x -> HighFidelityEphemerisModel.eom_NbodySH_SPICE(x, params, t), x)
 end
 
 

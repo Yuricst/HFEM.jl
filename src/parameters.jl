@@ -1,7 +1,7 @@
 """Parameters struct"""
 
 
-mutable struct HFEMParameters
+mutable struct HighFidelityEphemerisModelParameters
     et0::Float64
     DU::Real
     TU::Real
@@ -22,8 +22,8 @@ mutable struct HFEMParameters
 end
 
 
-function Base.show(io::IO, params::HFEMParameters)
-    println("HFEMParameters struct")
+function Base.show(io::IO, params::HighFidelityEphemerisModelParameters)
+    println("HighFidelityEphemerisModelParameters struct")
     @printf("    et0        : %s (et = %1.8f)\n", et2utc(params.et0, "ISOC", 3), params.et0)
     @printf("    DU         : %1.8f\n", params.DU)
     @printf("    TU         : %1.8f\n", params.TU)
@@ -32,7 +32,7 @@ end
 
 
 """
-Construct HFEMParameters struct.
+Construct HighFidelityEphemerisModelParameters struct.
 
 # Arguments
 - `et0::Float64`: reference epoch in seconds past J2000
@@ -48,7 +48,7 @@ Construct HFEMParameters struct.
 - `interpolate_ephem_span::Union{Nothing,Vector{Float64}}`: span of epochs to interpolate ephemerides
 - `interpolation_time_step::Real`: time step for interpolation
 """
-function HFEMParameters(
+function HighFidelityEphemerisModelParameters(
     et0::Float64,
     DU::Real,
     GMs::Vector{Float64},
@@ -107,7 +107,7 @@ function HFEMParameters(
         spherical_harmonics_data = nothing
     end
 
-    return HFEMParameters(
+    return HighFidelityEphemerisModelParameters(
         et0, DU, TU, VU,
         GMs, mus, naif_ids, naif_frame, abcorr,
         interpolated_ephems,

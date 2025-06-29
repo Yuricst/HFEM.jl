@@ -3,8 +3,8 @@
 using Random
 using Test
 
-if !@isdefined(HFEM)
-    include(joinpath(@__DIR__, "../src/HFEM.jl"))
+if !@isdefined(HighFidelityEphemerisModel)
+    include(joinpath(@__DIR__, "../src/HighFidelityEphemerisModel.jl"))
 end
 
 
@@ -20,11 +20,11 @@ function test_third_body_accel()
         r_3body = randn(3)
         mu_3body = rand()
 
-        accel = HFEM.third_body_accel_old(r_spacecraft, r_3body, mu_3body)
+        accel = HighFidelityEphemerisModel.third_body_accel_old(r_spacecraft, r_3body, mu_3body)
 
-        accel2 = HFEM.third_body_accel(r_spacecraft, r_3body, mu_3body)
+        accel2 = HighFidelityEphemerisModel.third_body_accel(r_spacecraft, r_3body, mu_3body)
         
-        accel_classical = HFEM.third_body_accel_classical(r_spacecraft, r_3body, mu_3body)
+        accel_classical = HighFidelityEphemerisModel.third_body_accel_classical(r_spacecraft, r_3body, mu_3body)
         # println()
         # @show accel
         # @show accel_classical

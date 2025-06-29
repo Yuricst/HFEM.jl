@@ -8,8 +8,8 @@ using OrdinaryDiffEq
 using SPICE
 using Test
 
-if !@isdefined(HFEM)
-    include(joinpath(@__DIR__, "../src/HFEM.jl"))
+if !@isdefined(HighFidelityEphemerisModel)
+    include(joinpath(@__DIR__, "../src/HighFidelityEphemerisModel.jl"))
 end
 
 
@@ -22,7 +22,7 @@ test_eom_Nbody_SPICE = function()
     DU = 3000.0
 
     et0 = str2et("2020-01-01T00:00:00")
-    parameters = HFEM.HFEMParameters(et0, DU, GMs, naif_ids, naif_frame, abcorr)
+    parameters = HighFidelityEphemerisModel.HighFidelityEphemerisModelParameters(et0, DU, GMs, naif_ids, naif_frame, abcorr)
     # @show parameters.DU, parameters.TU, parameters.VU
     # @show parameters.mus
 
@@ -33,7 +33,7 @@ test_eom_Nbody_SPICE = function()
     tspan = (0.0, 7*86400/parameters.TU)
 
     # solve
-    prob = ODEProblem(HFEM.eom_Nbody_SPICE!, u0, tspan, parameters)
+    prob = ODEProblem(HighFidelityEphemerisModel.eom_Nbody_SPICE!, u0, tspan, parameters)
     sol = solve(prob, Vern7(), reltol=1e-12, abstol=1e-12)
     u_check = [0.5223145338552279, 2.0961454012986276, -0.16366028913053066,
               -0.4093613718782754, 0.2538623882288259, -0.1600564978501581]
@@ -50,7 +50,7 @@ test_eom_stm_Nbody_SPICE = function(;verbose::Bool = false)
     DU = 3000.0
 
     et0 = str2et("2020-01-01T00:00:00")
-    parameters = HFEM.HFEMParameters(et0, DU, GMs, naif_ids, naif_frame, abcorr)
+    parameters = HighFidelityEphemerisModel.HighFidelityEphemerisModelParameters(et0, DU, GMs, naif_ids, naif_frame, abcorr)
     # @show parameters.DU, parameters.TU, parameters.VU
     # @show parameters.mus
 
@@ -59,21 +59,21 @@ test_eom_stm_Nbody_SPICE = function(;verbose::Bool = false)
     x0_stm = [x0; reshape(I(6),36)]
 
     # evaluate Jacobian
-    jac_analytical = HFEM.dfdx_Nbody_SPICE(x0, x0, parameters, 0.0)
+    jac_analytical = HighFidelityEphemerisModel.dfdx_Nbody_SPICE(x0, x0, parameters, 0.0)
     # @show jac_analytical
 
     f_eval = zeros(6)
-    HFEM.eom_Nbody_SPICE!(f_eval, x0, parameters, 0.0)
+    HighFidelityEphemerisModel.eom_Nbody_SPICE!(f_eval, x0, parameters, 0.0)
     jac_numerical = zeros(6,6)
     h = 1e-8
     for i = 1:6
         x0_copy = copy(x0)
         x0_copy[i] += h
         _f_eval = zeros(6)
-        HFEM.eom_Nbody_SPICE!(_f_eval, x0_copy, parameters, 0.0)
+        HighFidelityEphemerisModel.eom_Nbody_SPICE!(_f_eval, x0_copy, parameters, 0.0)
         jac_numerical[:,i] = (_f_eval - f_eval) / h
     end
-    jac_numerical_fd = HFEM.dfdx_Nbody_SPICE_fd(x0, 0.0, parameters, 0.0)
+    jac_numerical_fd = HighFidelityEphemerisModel.dfdx_Nbody_SPICE_fd(x0, 0.0, parameters, 0.0)
     if verbose
         println("Analytical Jacobian:")
         print_matrix(jac_analytical)
@@ -97,7 +97,7 @@ test_eom_stm_Nbody_SPICE = function(;verbose::Bool = false)
     tspan = (0.0, 1.0)
 
     # solve
-    prob = ODEProblem(HFEM.eom_stm_Nbody_SPICE!, x0_stm, tspan, parameters)
+    prob = ODEProblem(HighFidelityEphemerisModel.eom_stm_Nbody_SPICE!, x0_stm, tspan, parameters)
     sol = solve(prob, Vern7(), reltol=1e-12, abstol=1e-12)
     
     # construct STM
@@ -107,7 +107,7 @@ test_eom_stm_Nbody_SPICE = function(;verbose::Bool = false)
     for i = 1:6
         x0_copy = copy(x0)
         x0_copy[i] += h
-        sol_ptrb = solve(ODEProblem(HFEM.eom_Nbody_SPICE!, x0_copy, tspan, parameters), Vern7(), reltol=1e-12, abstol=1e-12)
+        sol_ptrb = solve(ODEProblem(HighFidelityEphemerisModel.eom_Nbody_SPICE!, x0_copy, tspan, parameters), Vern7(), reltol=1e-12, abstol=1e-12)
         STM_numerical[:,i] = (sol_ptrb.u[end][1:6] - sol.u[end][1:6]) / h
     end
     if verbose
