@@ -7,6 +7,7 @@ using Printf
 using SPICE
 import Symbolics
 
+include("utils.jl")
 include("perturbations/third_body.jl")
 include("perturbations/spherical_harmonics.jl")
 
@@ -23,11 +24,13 @@ include("eoms/eom_NbodySH_Interp.jl")
 
 include("events.jl")
 
+export eom_jacobian_fd, eom_hessian_fd
+
 export InterpolatedEphemeris
 export InterpolatedTransformation
 export HighFidelityEphemerisModelParameters
 
-export eom_Nbody_SPICE!, dfdx_Nbody_SPICE, eom_stm_Nbody_SPICE!
+export eom_Nbody_SPICE!, eom_Nbody_SPICE, eom_stm_Nbody_SPICE!, eom_stm_Nbody_SPICE_fd!
 export eom_Nbody_Interp!, eom_Nbody_Interp, dfdx_Nbody_Interp, eom_stm_Nbody_Interp!
 export eom_stm_Nbody_Interp_fd!, dfdx_Nbody_Interp_fd
 

@@ -8,9 +8,9 @@ using OrdinaryDiffEq
 using SPICE
 using Test
 
-if !@isdefined(HighFidelityEphemerisModel)
+#if !@isdefined(HighFidelityEphemerisModel)
     include(joinpath(@__DIR__, "../src/HighFidelityEphemerisModel.jl"))
-end
+#end
 
 
 test_eom_Nbody_SPICE = function()
@@ -59,7 +59,7 @@ test_eom_stm_Nbody_SPICE = function(;verbose::Bool = false)
     x0_stm = [x0; reshape(I(6),36)]
 
     # evaluate Jacobian
-    jac_analytical = HighFidelityEphemerisModel.dfdx_Nbody_SPICE(x0, x0, parameters, 0.0)
+    jac_analytical = HighFidelityEphemerisModel.dfdx_Nbody_SPICE(x0, 0.0, parameters, 0.0)
     # @show jac_analytical
 
     f_eval = zeros(6)
@@ -73,7 +73,9 @@ test_eom_stm_Nbody_SPICE = function(;verbose::Bool = false)
         HighFidelityEphemerisModel.eom_Nbody_SPICE!(_f_eval, x0_copy, parameters, 0.0)
         jac_numerical[:,i] = (_f_eval - f_eval) / h
     end
-    jac_numerical_fd = HighFidelityEphemerisModel.dfdx_Nbody_SPICE_fd(x0, 0.0, parameters, 0.0)
+    jac_numerical_fd = HighFidelityEphemerisModel.eom_jacobian_fd(
+        HighFidelityEphemerisModel.eom_Nbody_SPICE, x0, 0.0, parameters, 0.0
+    )
     if verbose
         println("Analytical Jacobian:")
         print_matrix(jac_analytical)
@@ -124,5 +126,63 @@ test_eom_stm_Nbody_SPICE = function(;verbose::Bool = false)
 end
 
 
+test_hessian_Nbody_SPICE = function(;verbose::Bool = false)
+    # define parameters
+    naif_ids = ["301", "399", "10"]
+    GMs = [bodvrd(ID, "GM", 1)[1] for ID in naif_ids]
+    naif_frame = "J2000"
+    abcorr = "NONE"
+    DU = 3000.0
+
+    et0 = str2et("2020-01-01T00:00:00")
+    parameters = HighFidelityEphemerisModel.HighFidelityEphemerisModelParameters(et0, DU, GMs, naif_ids, naif_frame, abcorr)
+    # @show parameters.DU, parameters.TU, parameters.VU
+    # @show parameters.mus
+
+    # initial state (in canonical scale)
+    x0 = [1.0, 0.0, 0.3, 0.5, 1.0, 0.0]
+    x0_stm = [x0; reshape(I(6),36)]
+
+    # evaluate Hessian via numerical difference of Jacobians
+    jac_numerical = HighFidelityEphemerisModel.dfdx_Nbody_SPICE(x0, 0.0, parameters, 0.0)
+    hess_numerical = zeros(6,6,6)
+    h = 1e-8
+    for i = 1:6
+        x0_copy = copy(x0)
+        x0_copy[i] += h
+        jac_ptrb = HighFidelityEphemerisModel.dfdx_Nbody_SPICE(x0_copy, 0.0, parameters, 0.0)
+        hess_numerical[:,:,i] = (jac_ptrb - jac_numerical) / h
+    end
+
+    # evaluate Hessian via ForwardDiff
+    hess_fd = HighFidelityEphemerisModel.eom_hessian_fd(
+        HighFidelityEphemerisModel.eom_Nbody_SPICE, x0, 0.0, parameters, 0.0
+    )
+
+    if verbose
+        println("ForwardDiff Hessian:")
+        for i = 1:6
+            println("i = $i")
+            print_matrix(hess_fd[i,:,:])
+        end
+        println()
+        println("Numerical Hessian:")
+        for i = 1:6
+            println("i = $i")
+            print_matrix(hess_numerical[i,:,:])
+        end
+        println()
+    end
+
+    for i = 1:6
+        if verbose
+            @show maximum(abs.(hess_fd[i,:,:] - hess_numerical[i,:,:]))
+        end
+        @test hess_fd[i,:,:] ≈ hess_numerical[i,:,:] atol = 1e-6
+    end
+end
+
+
 test_eom_Nbody_SPICE()
 test_eom_stm_Nbody_SPICE(verbose = false)
+test_hessian_Nbody_SPICE(verbose = false)
