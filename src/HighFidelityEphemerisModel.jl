@@ -10,6 +10,7 @@ import Symbolics
 include("utils.jl")
 include("perturbations/third_body.jl")
 include("perturbations/spherical_harmonics.jl")
+include("perturbations/solar_radiation_pressure.jl")
 
 include("jacobians_symbolic.jl")
 include("ephemeris_interpolation.jl")
