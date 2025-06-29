@@ -32,6 +32,6 @@ end
     include("test_callback.jl")
 end
 
-@testset "Hessian evaluation      " begin
+@testset "Hessian evaluation     " begin
     include("test_hessian_fd.jl")
 end
