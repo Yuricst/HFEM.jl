@@ -17,17 +17,27 @@ mutable struct HighFidelityEphemerisModelParameters
     frame_PCPF::Union{Nothing,String}
     interpolated_transformation::Union{Nothing,InterpolatedTransformation}
 
+    include_srp::Bool
+    k_srp_cannonball::Float64
+    idx_sun::Int
+
     f_jacobian::Union{Nothing,Function}
     Rs::Vector{Float64}
+    R_sun::Vector{Float64}
 end
 
 
 function Base.show(io::IO, params::HighFidelityEphemerisModelParameters)
     println("HighFidelityEphemerisModelParameters struct")
-    @printf("    et0        : %s (et = %1.8f)\n", et2utc(params.et0, "ISOC", 3), params.et0)
-    @printf("    DU         : %1.8f\n", params.DU)
-    @printf("    TU         : %1.8f\n", params.TU)
-    @printf("    VU         : %1.8f\n", params.VU)
+    @printf("    et0              : %s (et = %1.8f)\n", et2utc(params.et0, "ISOC", 3), params.et0)
+    @printf("    DU               : %1.8f\n", params.DU)
+    @printf("    TU               : %1.8f\n", params.TU)
+    @printf("    VU               : %1.8f\n", params.VU)
+    @printf("    include_srp      : %s\n", params.include_srp)
+    if params.include_srp
+        @printf("    k_srp_cannonball : %1.8f\n", params.k_srp_cannonball)
+        @printf("    idx_sun          : %d\n", params.idx_sun)
+    end
 end
 
 
@@ -61,6 +71,10 @@ function HighFidelityEphemerisModelParameters(
     get_jacobian_func::Bool = true,
     interpolate_ephem_span::Union{Nothing,Vector{Float64}} = nothing,
     interpolation_time_step::Real = 3600.0,
+    include_srp::Bool = false,
+    srp_Cr::Float64 = 1.15,
+    srp_Am::Float64 = 0.002,
+    srp_P0::Float64 = 4.56e-6,
 )
     VU = sqrt(GMs[1]/DU)
     TU = DU/VU
@@ -68,7 +82,11 @@ function HighFidelityEphemerisModelParameters(
 
     # Jacobian function
     if get_jacobian_func
-        f_jacobian = symbolic_Nbody_jacobian(length(GMs))
+        if include_srp
+            f_jacobian = symbolic_NbodySRP_jacobian(length(GMs))
+        else
+            f_jacobian = symbolic_Nbody_jacobian(length(GMs))
+        end
     else
         f_jacobian = nothing
     end
@@ -107,6 +125,17 @@ function HighFidelityEphemerisModelParameters(
         spherical_harmonics_data = nothing
     end
 
+    # SRP parameters
+    k_srp_cannonball = get_srp_cannonball_coefficient(DU, TU, srp_Cr, srp_Am, srp_P0)
+    if "10" in naif_ids
+        idx_sun = findfirst(x -> x == "10", naif_ids)
+    elseif include_srp
+        @error "NAIF ID \"10\" (Sun) must be provided when SRP is included"
+    else
+        k_srp_cannonball = 0.0
+        idx_sun = 0
+    end
+
     return HighFidelityEphemerisModelParameters(
         et0, DU, TU, VU,
         GMs, mus, naif_ids, naif_frame, abcorr,
@@ -114,6 +143,9 @@ function HighFidelityEphemerisModelParameters(
         spherical_harmonics_data,
         frame_PCPF,
         interpolated_transformation,
-        f_jacobian, Rs
+        include_srp,
+        k_srp_cannonball,
+        idx_sun,
+        f_jacobian, Rs, zeros(3),
     )
 end
