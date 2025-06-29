@@ -57,6 +57,10 @@ Construct HighFidelityEphemerisModelParameters struct.
 - `get_jacobian_func::Bool`: whether to construct symbolic Jacobian function (only for `Nbody` dynamics)
 - `interpolate_ephem_span::Union{Nothing,Vector{Float64}}`: span of epochs to interpolate ephemerides
 - `interpolation_time_step::Real`: time step for interpolation
+- `include_srp::Bool`: whether to include SRP terms
+- `srp_Cr::Float64`: SRP radiation pressure coefficient
+- `srp_Am::Float64`: SRP area-to-mass ratio in m^2/kg
+- `srp_P0::Float64`: SRP power in W
 """
 function HighFidelityEphemerisModelParameters(
     et0::Float64,
