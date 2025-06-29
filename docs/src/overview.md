@@ -21,8 +21,7 @@ In `HighFidelityEphemerisModel.jl`, the dynamcis consists of the central gravita
 
 - third-body perturbations
 - spherical harmonics
-- solar radiation pressure (todo)
-- drag (todo)
+- solar radiation pressure
 
 ```math
 \dot{\boldsymbol{x}}(t) = 

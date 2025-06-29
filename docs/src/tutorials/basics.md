@@ -11,7 +11,7 @@ We will now go over how to use the equations of motion to propagate some initial
 
 !!! tip
 
-    Before we get started, make sure you have relevant SPICE kernels downloaded locally in your systme. 
+    Before we get started, make sure you have relevant SPICE kernels downloaded locally in your system. 
     Most generic kernels are available on the JPL NAIF website: [https://naif.jpl.nasa.gov/pub/naif/generic_kernels/](https://naif.jpl.nasa.gov/pub/naif/generic_kernels/).
 
 
