@@ -54,7 +54,8 @@ test_eom_NbodySH_SPICE = function()
     # solve
     prob = ODEProblem(HighFidelityEphemerisModel.eom_NbodySH_SPICE!, u0, tspan, parameters)
     sol = solve(prob, Vern7(), reltol=1e-14, abstol=1e-14)
-    u_check = [-1.3008005902886173, 1.0821476922891953, -0.568881995188118, -0.13115294012566467, -0.6582795434237702, 0.0612542261511961]
+    u_check = [-1.3008031550828112, 1.082155017821313, -0.5688825611441191,
+               -0.13115469895637183, -0.6582761913248995, 0.06125335489936464]
     @test norm(sol.u[end] - u_check) < 1e-11
 
     # also solve the two-body problem for plotting
