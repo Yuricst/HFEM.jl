@@ -14,11 +14,11 @@ Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
 
 [compat]
 julia = "1.10"
-Dierckx = "0.5.4"
-ForwardDiff = "1.0.1"
-OrdinaryDiffEq = "6.98.0"
-SPICE = "0.2.4"
-Symbolics = "6.43.0"
+Dierckx = "0.5"
+ForwardDiff = "1.0"
+OrdinaryDiffEq = "6.98"
+SPICE = "0.2"
+Symbolics = "6.43"
 
 [extras]
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
