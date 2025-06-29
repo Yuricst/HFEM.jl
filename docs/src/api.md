@@ -25,6 +25,15 @@ Pages   = [
 ]
 ```
 
+## Jacobians & Hessians
+```@autodocs
+Modules = [HighFidelityEphemerisModel]
+Order   = [:function, :type]
+Pages   = [
+  "utils.jl"
+]
+```
+
 ## Perturbations
 
 ```@autodocs

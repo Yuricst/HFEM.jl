@@ -17,9 +17,9 @@ makedocs(
     pages = [
 		"Home" => "index.md",
         "Overview" => "overview.md",
-        # "Tutorials" => Any[
-        #     "Basics" => "basics.md",
-        # ],
+        "Tutorials" => Any[
+            "Jacobians & Hessians" => "jacobians_hessians.md",
+        ],
         "API" => "api.md",
 		# "API" => Any[
 		# 	"Core" => "api/api_core.md",
