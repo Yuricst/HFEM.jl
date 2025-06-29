@@ -60,7 +60,10 @@ test_eom_stm_Nbody_SPICE = function(;verbose::Bool = false)
     DU = 3000.0
 
     et0 = str2et("2020-01-01T00:00:00")
-    parameters = HighFidelityEphemerisModel.HighFidelityEphemerisModelParameters(et0, DU, GMs, naif_ids, naif_frame, abcorr)
+    parameters = HighFidelityEphemerisModel.HighFidelityEphemerisModelParameters(
+        et0, DU, GMs, naif_ids, naif_frame, abcorr;
+        include_srp = true,
+    )
     # @show parameters.DU, parameters.TU, parameters.VU
     # @show parameters
 
