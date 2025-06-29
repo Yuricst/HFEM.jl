@@ -8,7 +8,7 @@
   <a href="https://yuricst.github.io/HighFidelityEphemerisModel.jl/">📚Read the docs📚</a>
 </p>
 
-`HighFidelityEphemerisModel.jl` is a minimal implementation of high-fidelity ephemeris model dynamics compatible with the [`OrdinaryDiffEq.jl`](https://github.com/SciML/OrdinaryDiffEq.jl) ecosystem (i.e. its solvers, parallelism, etc.).
+`HighFidelityEphemerisModel.jl` provides equations of motion for high-fidelity ephemeris model dynamics compatible with the [`OrdinaryDiffEq.jl`](https://github.com/SciML/OrdinaryDiffEq.jl) ecosystem (i.e. its solvers, parallelism, etc.) and other utilities for astrodynamics.
 
 What `HighFidelityEphemerisModel.jl` contains:
 - full-ephemeris equations of motion relevant for astrodynamics
