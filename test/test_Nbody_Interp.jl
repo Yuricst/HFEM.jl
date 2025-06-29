@@ -84,7 +84,9 @@ test_eom_stm_Nbody_Interp = function(;verbose::Bool = false)
         HighFidelityEphemerisModel.eom_Nbody_Interp!(_f_eval, x0_copy, parameters, 0.0)
         jac_numerical[:,i] = (_f_eval - f_eval) / h
     end
-    jac_numerical_fd = HighFidelityEphemerisModel.dfdx_Nbody_Interp_fd(x0, 0.0, parameters, 0.0)
+    jac_numerical_fd = HighFidelityEphemerisModel.eom_jacobian_fd(
+        HighFidelityEphemerisModel.eom_Nbody_Interp, x0, 0.0, parameters, 0.0
+    )
 
     if verbose
         println("Analytical Jacobian:")

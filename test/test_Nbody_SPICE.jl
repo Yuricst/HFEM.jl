@@ -59,7 +59,7 @@ test_eom_stm_Nbody_SPICE = function(;verbose::Bool = false)
     x0_stm = [x0; reshape(I(6),36)]
 
     # evaluate Jacobian
-    jac_analytical = HighFidelityEphemerisModel.dfdx_Nbody_SPICE(x0, x0, parameters, 0.0)
+    jac_analytical = HighFidelityEphemerisModel.dfdx_Nbody_SPICE(x0, 0.0, parameters, 0.0)
     # @show jac_analytical
 
     f_eval = zeros(6)
@@ -73,7 +73,9 @@ test_eom_stm_Nbody_SPICE = function(;verbose::Bool = false)
         HighFidelityEphemerisModel.eom_Nbody_SPICE!(_f_eval, x0_copy, parameters, 0.0)
         jac_numerical[:,i] = (_f_eval - f_eval) / h
     end
-    jac_numerical_fd = HighFidelityEphemerisModel.dfdx_Nbody_SPICE_fd(x0, 0.0, parameters, 0.0)
+    jac_numerical_fd = HighFidelityEphemerisModel.eom_jacobian_fd(
+        HighFidelityEphemerisModel.eom_Nbody_SPICE, x0, 0.0, parameters, 0.0
+    )
     if verbose
         println("Analytical Jacobian:")
         print_matrix(jac_analytical)
