@@ -24,6 +24,11 @@ mutable struct HighFidelityEphemerisModelParameters
     f_jacobian::Union{Nothing,Function}
     Rs::Vector{Float64}
     R_sun::Vector{Float64}
+
+    adtype
+    jacobian_cache
+
+    u::Vector
 end
 
 
@@ -61,6 +66,7 @@ Construct HighFidelityEphemerisModelParameters struct.
 - `srp_Cr::Float64`: SRP radiation pressure coefficient
 - `srp_Am::Float64`: SRP area-to-mass ratio in m^2/kg
 - `srp_P0::Float64`: SRP power in W
+- `nu::Int`: control dimension for vector to be constructed within parameters struct
 """
 function HighFidelityEphemerisModelParameters(
     et0::Float64,
@@ -79,6 +85,7 @@ function HighFidelityEphemerisModelParameters(
     srp_Cr::Float64 = 1.15,
     srp_Am::Float64 = 0.002,
     srp_P0::Float64 = 4.56e-6,
+    nu::Int = 4,
 )
     VU = sqrt(GMs[1]/DU)
     TU = DU/VU
@@ -151,5 +158,8 @@ function HighFidelityEphemerisModelParameters(
         k_srp_cannonball,
         idx_sun,
         f_jacobian, Rs, zeros(3),
+        nothing,        # adtype, defaults to nothing
+        nothing,        # jacobian_cache, defaults to nothing
+        zeros(nu),
     )
 end
